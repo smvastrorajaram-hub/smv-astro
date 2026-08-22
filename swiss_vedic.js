@@ -124,8 +124,26 @@ function calculateSwiss({date,time,lat,lon,height=0,houseSystem,timezone='Asia/K
   const nodeCalc=calcPlanetSafe(jdEt,nodeId,flags,moshierFlags,'ராகு',useSwissFiles); calculationMode=nodeCalc.mode==='MOSEPH'?'MOSEPH':calculationMode; const rn=nodeCalc.result; const rahu=norm360(rn.data[0]), ketu=norm360(rahu+180);
   for(const [name,sid] of [['ராகு',rahu],['கேது',ketu]]){ const z=zodiac(sid), nk=nakshatra(sid); planets.push({name,longitude:Number(sid.toFixed(8)),degree:degText(sid),rasi:z.sign,nakshatra:nk.name,pada:nk.pada,lord:nk.lord,speed:0,navamsa:navamsa(sid)}); }
   const hs=houseSystem || process.env.HOUSE_SYSTEM || 'S';
-  const hres=swe.houses_ex2(jdUt, C.SEFLG_SIDEREAL, latitude, longitude, hs); fail(hres,'பாவ/லக்னம்');
-  const hd=hres.data||{}; const rawCusps=hd.houses || hd.cusps || []; const sourceCusps=Array.isArray(rawCusps)?rawCusps:(rawCusps.houses||rawCusps.cusps||[]); const oneBased=sourceCusps.length>=13; const cusps=Array.from({length:12},(_,i)=>norm360(Number(sourceCusps[oneBased?i+1:i])));
+  const hres=swe.houses_ex2(jdUt, C.SEFLG_SIDEREAL, latitude, longitude, hs);
+  // houses_ex2() returns data as an object { houses, points }, unlike calc()/utc_to_jd()
+  // which return data as an array. Do NOT pass a house result through the generic
+  // array validator; that was the cause of the current "returned invalid data" error.
+  if(!hres) throw new Error('பாவ/லக்னம்: Swiss Ephemeris returned no result');
+  if(hres.error) throw new Error(`பாவ/லக்னம்: ${hres.error}`);
+  if(hres.flag !== undefined && Number(hres.flag) < 0) throw new Error(`பாவ/லக்னம்: Swiss Ephemeris house calculation failed (flag ${hres.flag})`);
+  const hd=hres.data||{};
+  if(!hd || typeof hd !== 'object') throw new Error('பாவ/லக்னம்: Swiss Ephemeris returned invalid house data');
+  const rawCusps=hd.houses || hd.cusps || [];
+  let sourceCusps=[];
+  if(Array.isArray(rawCusps)) sourceCusps=rawCusps;
+  else if(rawCusps && typeof rawCusps==='object'){
+    if(Array.isArray(rawCusps.houses)) sourceCusps=rawCusps.houses;
+    else if(Array.isArray(rawCusps.cusps)) sourceCusps=rawCusps.cusps;
+    else sourceCusps=Array.from({length:13},(_,i)=>rawCusps[i] ?? rawCusps[String(i)]);
+  }
+  const oneBased=sourceCusps.length>=13;
+  const cusps=Array.from({length:12},(_,i)=>norm360(Number(sourceCusps[oneBased?i+1:i])));
+  if(cusps.some(x=>!Number.isFinite(x))) throw new Error('பாவ/லக்னம்: Swiss Ephemeris returned invalid house cusps.');
   if(cusps.some(x=>!Number.isFinite(x))) throw new Error('Swiss Ephemeris returned invalid house cusps.');
   const points=hd.points||hd.ascmc||{}; const asc=extractPoint(points,['ascendant','ASC','asc'],0); const mc=extractPoint(points,['mc','MC','mediumCoeli'],1);
   const ascLon=Number.isFinite(asc)?norm360(asc):cusps[0];
