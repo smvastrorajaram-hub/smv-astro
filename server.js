@@ -1326,7 +1326,7 @@ function nodeLongitudes(date){
 }
 function bodyTropicalLongitude(body,date,observer){
   if(body==="Sun") return Astronomy.SunPosition(date).elon;
-  if(body==="Moon") return Astronomy.EclipticGeoMoon(date).elon;
+  if(body==="Moon") return Astronomy.EclipticGeoMoon(date).lon;
   const vec=Astronomy.GeoVector(Astronomy.Body[body],date,true);
   return Astronomy.Ecliptic(vec).elon;
 }
@@ -1337,6 +1337,9 @@ function nakshatraInfo(lon){
 function dashaAtBirth(moonSiderealLon,date){
   const n=nakshatraInfo(moonSiderealLon), span=360/27, progressed=(norm360(moonSiderealLon)%span)/span;
   const lord=n.lord, total=DASHA_YEARS[lord], balance=total*(1-progressed);
+  if (!lord || !Number.isFinite(total) || !Number.isFinite(balance)) {
+    throw new Error("Unable to calculate Vimshottari Dasha from Moon longitude.");
+  }
   let idx=DASHA_ORDER.indexOf(lord), start=new Date(date.getTime());
   const periods=[];
   // Show the birth mahadasha balance followed by the next 8 periods.
@@ -1366,7 +1369,12 @@ function calculateVedicChart({date,time,lat,lon,height=0}){
     let sid;
     if(en==="NorthNode") sid=nodeLongitudes(dt).rahu;
     else if(en==="SouthNode") sid=nodeLongitudes(dt).ketu;
-    else sid=siderealLon(bodyTropicalLongitude(en,astroTime,observer),dt);
+    else {
+      const tropical = bodyTropicalLongitude(en,astroTime,observer);
+      if (!Number.isFinite(tropical)) throw new Error(`Invalid astronomical longitude for ${en}.`);
+      sid=siderealLon(tropical,dt);
+    }
+    if (!Number.isFinite(sid)) throw new Error(`Invalid sidereal longitude for ${ta}.`);
     const z=zodiac(sid), nk=nakshatraInfo(sid);
     planets.push({name:ta,longitude:Number(sid.toFixed(6)),degree:degText(sid),rasi:z.sign,nakshatra:nk.name,pada:nk.pada,lord:nk.lord});
   }
