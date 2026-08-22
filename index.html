@@ -91,6 +91,34 @@ section>h2{color:var(--maroon);font-family:Georgia,"Times New Roman",serif}
 #admin,#adminSummary,#pendingAstros,#adminAnswers,#adminReviews,#adminQuestions,#dashboard,#dashboardContent,#astroList,#astroCards,#ask-flow,#register-flow{min-width:0;max-width:100%;overflow-x:hidden}
 #adminQuestions>div,#adminAnswers>div,#pendingAstros>div,#adminReviews>div{min-width:0!important;max-width:100%!important;overflow:hidden!important;white-space:normal!important;overflow-wrap:anywhere!important;word-break:break-word!important}
 #adminQuestions b,#adminAnswers b,#pendingAstros b,#adminReviews b,#adminQuestions p,#adminAnswers p,#pendingAstros p,#adminReviews p{white-space:normal!important;overflow-wrap:anywhere!important;word-break:break-word!important;max-width:100%!important}
+
+/* V134: professional horoscope tables and South Indian chart typography */
+.data-table-wrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid #d9c39a;border-radius:10px;background:#fffdf8}
+table.data-table{width:100%;min-width:680px;border-collapse:separate;border-spacing:0;table-layout:fixed;font-size:14px;color:var(--text);background:#fffdf8}
+.data-table th,.data-table td{padding:11px 12px;border-right:1px solid #e5d6bd;border-bottom:1px solid #e5d6bd;text-align:left;vertical-align:middle;line-height:1.45;white-space:normal;overflow-wrap:anywhere;word-break:normal}
+.data-table th{background:#f4e7cc;color:var(--maroon);font-weight:900;white-space:nowrap}
+.data-table tr:last-child td{border-bottom:0}.data-table th:last-child,.data-table td:last-child{border-right:0}
+.data-table tbody tr:nth-child(even){background:#fffaf0}.data-table tbody tr:hover{background:#fff3d5}
+.data-table th:nth-child(1),.data-table td:nth-child(1){width:22%}.data-table th:nth-child(2),.data-table td:nth-child(2){width:20%}.data-table th:nth-child(3),.data-table td:nth-child(3){width:18%}.data-table th:nth-child(4),.data-table td:nth-child(4){width:30%}.data-table th:nth-child(5),.data-table td:nth-child(5){width:14%}
+
+.dasha-tree{display:flex;flex-direction:column;gap:10px}.dasha-node{border:1px solid #d8c7a7;border-radius:12px;background:#fffdf8;overflow:hidden}.dasha-head{width:100%;border:0;background:transparent;padding:14px 16px;text-align:left;display:flex;align-items:center;justify-content:space-between;gap:10px;font:inherit;cursor:pointer}.dasha-head:hover{background:#fff8e9}.dasha-title{font-weight:700}.dasha-dates{font-size:.85em;color:#6d6256}.dasha-arrow{font-size:18px;transition:transform .2s}.dasha-node.open>.dasha-head .dasha-arrow{transform:rotate(90deg)}.dasha-body{display:none;padding:0 12px 12px}.dasha-node.open>.dasha-body{display:block}.dasha-subtable{width:100%;border-collapse:collapse}.dasha-subtable th,.dasha-subtable td{padding:9px 8px;border-bottom:1px solid #eee3d1;text-align:left;vertical-align:top}.dasha-subtable th{font-size:.85em;color:#6d6256}.dasha-mini{margin-top:8px}.dasha-current{outline:2px solid #d2a85a;background:#fff7dc}.dasha-breadcrumb{margin:0 0 12px;padding:10px 12px;border-radius:10px;background:#fff8e9;font-size:.9em}.dasha-empty{padding:10px;color:#777}
+.dasha-table th:nth-child(1),.dasha-table td:nth-child(1){width:20%}.dasha-table th:nth-child(2),.dasha-table td:nth-child(2){width:20%}.dasha-table th:nth-child(3),.dasha-table td:nth-child(3){width:30%}.dasha-table th:nth-child(4),.dasha-table td:nth-child(4){width:30%}
+.south-rasi-cell{position:relative;justify-content:flex-start}
+.south-rasi-cell .planet-line{display:flex;align-items:center;justify-content:center;gap:4px;width:100%;padding:2px 1px;border-bottom:1px dotted #dbc9aa;font-size:clamp(10px,1.9vw,13px);font-weight:800;color:#6b2d16;line-height:1.3;white-space:nowrap}
+.south-rasi-cell .planet-line:last-child{border-bottom:0}
+.south-rasi-cell .planet-glyph{font-weight:900;color:#8a4b16}.south-rasi-cell .planet-degree{font-weight:700;color:#5f5346}
+.south-rasi-cell .lagna{display:block;width:100%;padding:2px 0;border:1px solid #b78625;border-radius:5px;background:#fff0c7;color:#7b3d0e;font-size:10px}
+@media(max-width:700px){table.data-table{min-width:620px}.data-table th,.data-table td{padding:9px 8px;font-size:13px}.south-indian-chart{width:min(680px,100%)}.south-rasi-cell .planet-line{font-size:10px;gap:2px}}
+
+/* V133 South Indian Rasi chart: fixed-sign 4x4 layout with center blank */
+.south-indian-chart{width:min(640px,100%);margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(4,1fr);border:2px solid #6f4d2c;background:#fffdf7;aspect-ratio:1/1;box-shadow:0 8px 24px rgba(111,21,21,.08)}
+.south-rasi-cell{border:1px solid #8f704f;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;text-align:center;padding:7px 4px;min-width:0;overflow:hidden;background:linear-gradient(180deg,#fffdf7,#fff8e9)}
+.south-rasi-cell .sign{font-weight:900;color:var(--maroon);font-size:clamp(11px,2.2vw,16px);line-height:1.25}
+.south-rasi-cell .house{font-size:10px;color:#80654d;margin-top:2px}
+.south-rasi-cell .lagna{font-weight:900;color:#9b4b16;font-size:11px;margin-top:3px}
+.south-rasi-cell .planet{font-size:clamp(10px,2vw,14px);font-weight:800;color:var(--primary);line-height:1.25;margin-top:2px;overflow-wrap:anywhere}
+.south-chart-center{grid-column:2/4;grid-row:2/4;border:1px solid #8f704f;display:flex;align-items:center;justify-content:center;background:#fffdf7;color:#b08a5b;font-family:Georgia,serif;font-size:clamp(18px,4vw,28px);letter-spacing:3px}
+@media(max-width:520px){.south-rasi-cell{padding:4px 2px}.south-rasi-cell .house{font-size:8px}.south-rasi-cell .lagna{font-size:9px}}
 footer{text-align:center;padding:35px 16px;color:var(--muted);border-top:3px double var(--gold);margin-top:30px;background:#fffaf0}
 
 /* V53 homepage refinement: open welcome composition + separated registration choices */
@@ -3831,7 +3859,7 @@ window.__SMV_APP_READY=true;
   const rasiIndex=r=>rasiList.indexOf(r);
   const signIcon=['♈','♉','♊','♋','♌','♍','♎','♏','♐','♑','♒','♓'];
   function fmtDate(v){if(!v)return '—';try{return new Date(v+'T00:00:00').toLocaleDateString('ta-IN',{day:'2-digit',month:'long',year:'numeric'});}catch{return v;}}
-  function rows(items){return items.map(x=>`<tr><td><b>${esc(x.name)}</b></td><td>${esc(x.rasi)}</td><td>${esc(x.degree)}</td><td>${esc(x.nakshatra)} · பாதம் ${x.pada}</td></tr>`).join('');}
+  function rows(items){return items.map(x=>`<tr><td><b>${esc(x.name)}</b></td><td>${esc(x.rasi)}</td><td>${esc(x.degree)}</td><td>${esc(x.nakshatra)}</td><td>பாதம் ${x.pada}</td></tr>`).join('');}
   function render(d){
     const result=$('tamilHoroscopeResult');
     const name=($('tamilAstroName')?.value||'அன்பார்ந்தவர்').trim()||'அன்பார்ந்தவர்';
@@ -3842,13 +3870,23 @@ window.__SMV_APP_READY=true;
       <h2 style="text-align:center">${esc(name)}</h2>
       <p class="small" style="text-align:center">பிறந்த தேதி: ${esc(fmtDate(d.birth.date))} · நேரம்: ${esc(d.birth.time)} · ${esc(d.birth.latitude)}, ${esc(d.birth.longitude)} · ${esc(d.timezone)}</p>
       <div class="grid" style="margin-top:15px">
-        <div class="stat"><span class="small">🔱 லக்னம்</span><p><b>${esc(d.lagna.rasi)}</b> · ${esc(d.lagna.degree)}<br>${esc(d.lagna.nakshatra)} · பாதம் ${d.lagna.pada}</p></div>
+        <div class="stat"><span class="small">🔱 லக்னம்</span><p><b>${esc(d.lagna.rasi)}</b> · ${esc(d.lagna.degree)}</p><p class="small">${esc(d.lagna.nakshatra)} · பாதம் ${d.lagna.pada}<br>நெடுவரை: ${Number(d.lagna.longitude).toFixed(4)}°</p></div>
         <div class="stat"><span class="small">🌙 சந்திர ராசி</span><p><b>${esc(d.moonRasi)}</b> · ${esc(d.moonNakshatra)}<br>பாதம் ${d.moonPada}</p></div>
         <div class="stat"><span class="small">🧭 அயனாம்சம்</span><p>${d.ayanamsa.toFixed(3)}°<br><span class="small">Lahiri-style sidereal</span></p></div>
         <div class="stat"><span class="small">⚙️ Calculation</span><p>Astronomy Engine<br><span class="small">sidereal/Vedic mapping</span></p></div>
       </div>
       <h3 style="margin-top:22px">🗺️ ராசி கட்டம்</h3>
-      <div id="rasiChart" style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;max-width:640px;margin:0 auto"></div>
+      <div id="rasiChart" class="south-indian-chart" aria-label="ராசி கட்டம்"></div>
+      <h3 style="margin-top:22px">🪷 நவாம்ச கட்டம் (D9)</h3>
+      <p class="small">ஒவ்வொரு கிரகத்தின் D9 நவாம்ச ராசி, லக்ன நவாம்சம் உட்பட.</p>
+      <div id="navamsaChart" class="south-indian-chart" aria-label="நவாம்ச கட்டம்"></div>
+      <h3 style="margin-top:22px">🏠 பாவ கட்டம்</h3>
+      <p class="small">இங்கு 1-ம் பாவம் லக்னத்திலிருந்து தொடங்கும் <b>சம பாவ முறை (Equal House)</b> பயன்படுத்தப்படுகிறது.</p>
+      <div id="bhavaChart" class="south-indian-chart" aria-label="பாவ கட்டம்"></div>
+      <h3 style="margin-top:22px">📐 பாவ ஸ்புடம்</h3>
+      <div class="data-table-wrap"><table class="data-table bhava-table"><thead><tr><th>பாவம்</th><th>ஸ்புடம்</th><th>ராசி</th><th>கிரகங்கள்</th></tr></thead><tbody>${(d.bhavas||[]).map(b=>{const ps=(d.planets||[]).filter(p=>p.bhava===b.house).map(p=>p.name).join(', ');return `<tr><td><b>${b.house}</b></td><td>${esc(b.degree)}</td><td>${esc(b.rasi)}</td><td>${esc(ps||'—')}</td></tr>`}).join('')}</tbody></table></div>
+      <h3 style="margin-top:22px">🪷 நவாம்ச நிலைகள்</h3>
+      <div class="data-table-wrap"><table class="data-table navamsa-table"><thead><tr><th>கிரகம்</th><th>D1 ராசி</th><th>D9 நவாம்ச ராசி</th><th>நவாம்ச பாதம்</th><th>பாவம்</th></tr></thead><tbody>${(d.planets||[]).map(p=>`<tr><td><b>${esc(p.name)}</b></td><td>${esc(p.rasi)}</td><td>${esc(p.navamsa?.rasi||'—')}</td><td>${p.navamsa?.pada||'—'}</td><td>${p.bhava||'—'}</td></tr>`).join('')}</tbody></table></div>
       <h3 style="margin-top:22px">📍 பிறப்பு விவரங்கள்</h3>
       <div class="grid">
         <div class="stat"><span class="small">பிறந்த இடம்</span><p><b>${esc($('tamilBirthPlace')?.value||'—')}</b></p></div>
@@ -3856,20 +3894,83 @@ window.__SMV_APP_READY=true;
         <div class="stat"><span class="small">Longitude</span><p><b>${Number(d.birth.longitude).toFixed(6)}</b></p></div>
         <div class="stat"><span class="small">ராசி</span><p><b>${esc(d.moonRasi)}</b></p></div>
       </div>
-      <h3 style="margin-top:22px">🪐 கிரக நிலைகள்</h3>
-      <div style="overflow:auto"><table class="data-table"><thead><tr><th>கிரகம்</th><th>ராசி</th><th>பாகை</th><th>நட்சத்திரம்</th></tr></thead><tbody>${rows(d.planets)}</tbody></table></div>
-      <h3 style="margin-top:22px">📅 விம்சோத்தரி மகாதசா</h3>
+      <h3 style="margin-top:22px">🪐 கிரக நிலைகள்</h3><p class="small">ஒவ்வொரு கிரகமும் தனி வரியில்: ராசி · பாகை · நட்சத்திரம் · பாதம்.</p>
+      <div class="data-table-wrap"><table class="data-table"><thead><tr><th>கிரகம்</th><th>ராசி</th><th>பாகை</th><th>நட்சத்திரம்</th><th>பாதம்</th></tr></thead><tbody>${rows(d.planets)}</tbody></table></div>
+      <h3 style="margin-top:22px">📅 விம்சோத்தரி தசா</h3>
+      <p class="small">மகாதசையை touch செய்தால் <b>புக்தி / அந்தர்தசை</b> திறக்கும். புக்தியை touch செய்தால் <b>அந்தரம் / பிரத்யந்தர்தசை</b> திறக்கும்.</p>
       <p class="small">பிறந்த நேர சந்திரனின் நட்சத்திரத்தை அடிப்படையாகக் கொண்ட ஆரம்ப மகாதசா balance: <b>${d.dashas.balanceYears} ஆண்டுகள்</b>.</p>
-      <div style="overflow:auto"><table class="data-table"><thead><tr><th>தசா</th><th>கால அளவு</th><th>தொடக்கம்</th><th>முடிவு</th></tr></thead><tbody>${d.dashas.periods.map(x=>`<tr><td><b>${esc(x.lord)}</b></td><td>${x.years} ஆண்டுகள்</td><td>${esc(x.start)}</td><td>${esc(x.end)}</td></tr>`).join('')}</tbody></table></div>
+      <div id="dashaTree" class="dasha-tree"></div>
       <div class="card" style="margin-top:16px;background:#fff8e9"><b>✨ ராசிபலன் அடிப்படை</b><p style="margin-bottom:0">உங்கள் சந்திர ராசி <b>${esc(current?.rasi||d.moonRasi)}</b>. மேலே உள்ள கணக்கீட்டு தரவை வைத்து அடுத்த கட்டத்தில் தமிழ் AI விளக்கத்தை உருவாக்கலாம்.</p></div>
       <p class="small" style="margin-top:15px"><b>குறிப்பு:</b> இது astronomical ephemeris அடிப்படையிலான கணக்கீட்டு layer. பாரம்பரிய ஜோதிட பலன்கள் விளக்க/நம்பிக்கை சார்ந்தவை; முக்கிய வாழ்க்கை முடிவுகளுக்கு இதை ஒரே ஆதாரமாக பயன்படுத்த வேண்டாம்.</p>
       <div class="action-row"><button class="btn" type="button" id="printTamilHoroscope">🖨️ அச்சிட / PDF ஆக சேமிக்க</button><button class="btn gray" type="button" id="copyTamilHoroscope">📋 உரையை நகலெடுக்க</button></div>
     </div>`;
     const chart=$('rasiChart');
     if(chart){
-      const houses=Array.from({length:12},(_,i)=>({house:i+1,sign:rasiList[(rasiIndex(d.lagna.rasi)+i)%12],items:[]}));
-      (d.planets||[]).forEach(p=>{const si=rasiIndex(p.rasi); if(si>=0){const hi=(si-rasiIndex(d.lagna.rasi)+12)%12; houses[hi].items.push(p.name);}});
-      chart.innerHTML=houses.map(h=>`<div class="card" style="min-height:80px;padding:8px;text-align:center"><b>${h.house}</b><br><span>${esc(h.sign)}</span><br><small>${h.items.length?esc(h.items.join(' · ')):'—'}</small></div>`).join('');
+      // South Indian style: signs stay fixed; planets are placed in their sign.
+      // Layout: Pisces Aries Taurus Gemini / Aquarius [center] Cancer / Capricorn [center] Leo / Sagittarius Scorpio Libra Virgo.
+      const signOrder=[11,0,1,2,10,null,null,3,9,null,null,4,8,7,6,5];
+      const lagnaIndex=rasiIndex(d.lagna.rasi);
+      const houseForSign=si=>((si-lagnaIndex+12)%12)+1;
+      const bySign=Array.from({length:12},()=>[]);
+      (d.planets||[]).forEach(p=>{const si=rasiIndex(p.rasi); if(si>=0) bySign[si].push(p.name);});
+      let html='';
+      signOrder.forEach((si,pos)=>{
+        if(si===null){ if(pos===5) html+=`<div class="south-chart-center">ராசி<br>ஜாதகம்</div>`; return; }
+        const isLagna=si===lagnaIndex;
+        const items=bySign[si].slice();
+        const planetLines=items.map(name=>{ const p=(d.planets||[]).find(z=>z.name===name); return `<div class="planet-line"><span class="planet-glyph">${esc(name)}</span><span class="planet-degree">${esc(p?.degree||'')}</span></div>`; }).join('');
+        html+=`<div class="south-rasi-cell"><div class="sign">${signIcon[si]} ${esc(rasiList[si])}</div><div class="house">${houseForSign(si)}-ம் பாவம்</div>${isLagna?'<div class="lagna">🔱 லக்னம்</div>':''}${planetLines}</div>`;
+      });
+      chart.innerHTML=html;
+    }
+    const navChart=$('navamsaChart');
+    if(navChart){
+      const order=[11,0,1,2,10,null,null,3,9,null,null,4,8,7,6,5];
+      const bySign=Array.from({length:12},()=>[]);
+      (d.navamsa?.planets||d.planets||[]).forEach(p=>{const r=p.navamsa?.rasi; const si=rasiIndex(r); if(si>=0)bySign[si].push(p);});
+      const lagnaD9=rasiIndex(d.navamsa?.lagna?.rasi); let h='';
+      order.forEach((si,pos)=>{if(si===null){if(pos===5)h+=`<div class="south-chart-center">D9<br>நவாம்சம்</div>`;return;}
+        const ps=bySign[si].map(p=>`<div class="planet-line"><span class="planet-glyph">${esc(p.name)}</span><span class="planet-degree">${esc(p.name==='லக்னம்'?'லக்னம்':(p.navamsa?.rasi||''))}</span></div>`).join('');
+        h+=`<div class="south-rasi-cell"><div class="sign">${signIcon[si]} ${esc(rasiList[si])}</div>${si===lagnaD9?'<div class="lagna">🔱 D9 லக்னம்</div>':''}${ps||'<div class="small">—</div>'}</div>`;});
+      navChart.innerHTML=h;
+    }
+    const bhChart=$('bhavaChart');
+    if(bhChart){
+      // Bhava chart is house-based, not sign-based. Equal-house cusps may fall
+      // inside signs, so render the 12 houses in numerical order with cusp data.
+      const bhavas=d.bhavas||[]; const byHouse=Array.from({length:12},()=>[]);
+      (d.planets||[]).forEach(p=>{const h=Number(p.bhava); if(h>=1&&h<=12) byHouse[h-1].push(p);});
+      let h='';
+      for(let i=0;i<12;i++){
+        const b=bhavas[i]||{};
+        const ps=byHouse[i].map(p=>`<div class="planet-line"><span class="planet-glyph">${esc(p.name)}</span><span class="planet-degree">${esc(p.degree||'')}</span></div>`).join('');
+        h+=`<div class="south-rasi-cell"><div class="sign">${esc(b.rasi||'—')}</div><div class="house">${i+1}-ம் பாவம்</div>${i===0?'<div class="lagna">🔱 லக்ன பாவம்</div>':''}<div class="small">ஸ்புடம்: ${esc(b.degree||'—')}</div>${ps||'<div class="small">கிரகம் இல்லை</div>'}</div>`;
+      }
+      bhChart.innerHTML=h;
+    }
+    const dashaTree=$('dashaTree');
+    if(dashaTree){
+      const planetTa={
+        'கேது':'கேது','சுக்கிரன்':'சுக்கிரன்','சூரியன்':'சூரியன்','சந்திரன்':'சந்திரன்','செவ்வாய்':'செவ்வாய்','ராகு':'ராகு','குரு':'குரு','சனி':'சனி','புதன்':'புதன்'
+      };
+      const periodHtml=(p,level,path)=>{
+        const child=level===1?p.antardashas:(level===2?p.pratyantars:[]);
+        const has=child&&child.length>0;
+        const label=level===1?'புக்தி / அந்தர்தசை':level===2?'அந்தரம் / பிரத்யந்தர்தசை':'';
+        const rows=has?child.map((x,i)=>{
+          const nested=x.pratyantars||[]; const nestedHtml=nested.length?nested.map(y=>`<tr><td>${esc(y.lord)}</td><td>${esc(y.start)}</td><td>${esc(y.end)}</td></tr>`).join(''):'';
+          return `<div class="dasha-node" data-level="${level+1}" data-path="${esc(path+'>'+x.lord)}">
+            <button type="button" class="dasha-head" aria-expanded="false"><span><span class="dasha-title">${esc(x.lord)}</span> <span class="dasha-dates">${esc(x.start)} → ${esc(x.end)}</span></span><span class="dasha-arrow">▶</span></button>
+            <div class="dasha-body"><div class="dasha-breadcrumb">${esc(path+' → '+x.lord)} · ${esc(label)}</div>
+              ${nested.length?`<table class="dasha-subtable"><thead><tr><th>அந்தரம் / பிரத்யந்தரம்</th><th>தொடக்கம்</th><th>முடிவு</th></tr></thead><tbody>${nestedHtml}</tbody></table>`:'<div class="dasha-empty">அடுத்த நிலை தகவல் இல்லை.</div>'}
+            </div></div>`;
+        }).join(''):'';
+        return `<div class="dasha-node" data-level="${level}" data-path="${esc(path+'>'+p.lord)}">
+          <button type="button" class="dasha-head" aria-expanded="false"><span><span class="dasha-title">${esc(planetTa[p.lord]||p.lord)}</span> <span class="dasha-dates">${esc(p.start)} → ${esc(p.end)}</span></span><span class="dasha-arrow">▶</span></button>
+          <div class="dasha-body"><div class="dasha-breadcrumb">${esc(path+'>'+p.lord)} · ${level===1?'மகாதசை':''}</div>${has?`<div class="small" style="margin-bottom:8px">${esc(label)} — 9 துணைக் காலங்கள்</div>${child.map((x)=>`<div class="dasha-node" data-level="2" data-path="${esc(p.lord+'>'+x.lord)}"><button type="button" class="dasha-head" aria-expanded="false"><span><span class="dasha-title">${esc(x.lord)}</span> <span class="dasha-dates">${esc(x.start)} → ${esc(x.end)}</span></span><span class="dasha-arrow">▶</span></button><div class="dasha-body"><div class="dasha-breadcrumb">${esc(p.lord+' → '+x.lord)} · புக்தி / அந்தர்தசை</div>${x.pratyantars?.length?`<table class="dasha-subtable"><thead><tr><th>அந்தரம் / பிரத்யந்தர்தசை</th><th>தொடக்கம்</th><th>முடிவு</th></tr></thead><tbody>${x.pratyantars.map(y=>`<tr><td><b>${esc(y.lord)}</b></td><td>${esc(y.start)}</td><td>${esc(y.end)}</td></tr>`).join('')}</tbody></table>`:'<div class="dasha-empty">அந்தர காலங்கள் இல்லை.</div>'}</div></div>`).join('')}`:'<div class="dasha-empty">புக்தி தகவல் இல்லை.</div>'}</div></div>`;
+      };
+      dashaTree.innerHTML=(d.dashas.periods||[]).map(p=>periodHtml(p,1,'மகாதசை')).join('');
+      dashaTree.querySelectorAll('.dasha-head').forEach(btn=>btn.addEventListener('click',()=>{const node=btn.parentElement;const open=!node.classList.contains('open');node.classList.toggle('open',open);btn.setAttribute('aria-expanded',String(open));}));
     }
     result.classList.remove('hidden');
     $('printTamilHoroscope')?.addEventListener('click',()=>window.print());

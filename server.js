@@ -1309,15 +1309,47 @@ function zodiac(longitude){ const lon=norm360(longitude), idx=Math.floor(lon/30)
 function degText(d){ const x=norm360(d), deg=Math.floor(x%30), min=Math.floor(((x%30)-deg)*60); return `${String(deg).padStart(2,"0")}° ${String(min).padStart(2,"0")}′`; }
 function julianDay(date){ return date.getTime()/86400000 + 2440587.5; }
 function meanSiderealTime(date,lon){
+  // Use Astronomy Engine's sidereal-time implementation (GAST) and add
+  // geographic longitude. This avoids mixing a hand-rolled GMST formula
+  // with an apparent/sidereal ascendant calculation.
+  const gstHours = (typeof Astronomy.SiderealTime === "function")
+    ? Astronomy.SiderealTime(date)
+    : null;
+  if (Number.isFinite(gstHours)) return norm360(gstHours * 15 + lon);
   const jd=julianDay(date), T=(jd-2451545.0)/36525;
   const gmst=280.46061837 + 360.98564736629*(jd-2451545.0) + 0.000387933*T*T - T*T*T/38710000;
   return norm360(gmst+lon);
 }
 function ascendantLongitude(date,lat,lon){
-  const eps=(23.439291 - 0.0130042*((julianDay(date)-2451545)/36525));
-  const theta=meanSiderealTime(date,lon)*Math.PI/180, phi=lat*Math.PI/180, e=eps*Math.PI/180;
-  const asc=Math.atan2(-Math.cos(theta), Math.sin(theta)*Math.cos(e)+Math.tan(phi)*Math.sin(e))*180/Math.PI;
-  return norm360(asc);
+  // Eastern horizon intersection using the standard atan2 form.
+  // Local sidereal time depends on UTC date/time AND geographic longitude;
+  // latitude enters the horizon/ecliptic intersection.
+  const T=(julianDay(date)-2451545.0)/36525;
+  const eps=(23.439291111 - 0.013004167*T - 0.000000164*T*T + 0.000000504*T*T*T);
+  const theta=meanSiderealTime(date,lon)*Math.PI/180;
+  const phi=lat*Math.PI/180, e=eps*Math.PI/180;
+  const tropical=norm360(Math.atan2(Math.cos(theta), -(Math.sin(theta)*Math.cos(e)+Math.tan(phi)*Math.sin(e)))*180/Math.PI);
+  return tropical;
+}
+function navamsaSignIndex(siderealLon){
+  const lon=norm360(siderealLon);
+  const rasi=Math.floor(lon/30), part=Math.floor((lon%30)/(30/9));
+  // Navamsa starts: movable=1st sign, fixed=9th, dual=5th; then proceeds sequentially.
+  const mode=rasi%3;
+  const start=mode===0 ? rasi : mode===1 ? (rasi+8)%12 : (rasi+4)%12;
+  return (start+part)%12;
+}
+function navamsaData(lon){
+  const idx=navamsaSignIndex(lon);
+  const part=Math.floor((norm360(lon)%30)/(30/9))+1;
+  return {rasi:VEDIC_RASIS[idx],pada:part};
+}
+function bhavaCuspsEqual(ascLon){
+  // Equal-house bhava sphuta: each cusp is exactly 30° from the Ascendant.
+  return Array.from({length:12},(_,i)=>norm360(ascLon+i*30));
+}
+function houseFromCusp(lon,ascLon){
+  return Math.floor(norm360(lon-ascLon)/30)+1;
 }
 function nodeLongitudes(date){
   const T=(julianDay(date)-2451545.0)/36525;
@@ -1334,22 +1366,67 @@ function nakshatraInfo(lon){
   const span=360/27, padaSpan=span/4, idx=Math.floor(norm360(lon)/span), within=norm360(lon)-idx*span;
   return {index:idx,name:NAKSHATRAS[idx],pada:Math.floor(within/padaSpan)+1,lord:NAK_LORDS[idx%9]};
 }
+function addDays(date, days){ return new Date(date.getTime()+days*365.2425*86400000); }
+function isoDate(date){ return date.toISOString().slice(0,10); }
+function sequenceFromLord(lord){
+  const i=DASHA_ORDER.indexOf(lord);
+  if(i<0) throw new Error(`Unknown Vimshottari lord: ${lord}`);
+  return DASHA_ORDER.slice(i).concat(DASHA_ORDER.slice(0,i));
+}
+function buildSubPeriods(parentLord, parentStart, parentEnd, level){
+  const seq=sequenceFromLord(parentLord), parentDays=(parentEnd.getTime()-parentStart.getTime())/86400000;
+  return seq.map(lord=>{
+    const years=DASHA_YEARS[lord];
+    // Proportional rule: sub-period = full parent duration * lord years / 120.
+    const durationDays=parentDays*(years/120);
+    return {lord, years:Number((durationDays/365.2425).toFixed(4)), startDate:null, endDate:null, durationDays};
+  }).reduce((acc,x)=>{
+    const prev=acc.length?acc[acc.length-1].endDate:parentStart;
+    const start=prev, end=new Date(start.getTime()+x.durationDays*86400000);
+    acc.push({...x,startDate:start,endDate:end}); return acc;
+  },[]).map(x=>({...x,start:isoDate(x.startDate),end:isoDate(x.endDate)}));
+}
+function buildPratyantar(antarLord, startDate, endDate){
+  return buildSubPeriods(antarLord,startDate,endDate,3).map(x=>({lord:x.lord,years:x.years,start:x.start,end:x.end}));
+}
+function buildAntardasha(mdLord, fullStart, fullEnd, birthDate){
+  return buildSubPeriods(mdLord,fullStart,fullEnd,2).map(x=>{
+    const visibleStart=x.startDate<birthDate?birthDate:x.startDate;
+    const visibleEnd=x.endDate;
+    return {
+      lord:x.lord,
+      years:x.years,
+      start:isoDate(visibleStart),
+      end:isoDate(visibleEnd),
+      hiddenBeforeBirth:x.endDate<=birthDate,
+      pratyantars: buildPratyantar(x.lord,x.startDate,x.endDate)
+        .filter(p=>new Date(p.end+'T23:59:59')>=birthDate)
+        .map(p=>({...p,start:p.start<isoDate(birthDate)?isoDate(birthDate):p.start}))
+    };
+  }).filter(x=>!x.hiddenBeforeBirth);
+}
 function dashaAtBirth(moonSiderealLon,date){
   const n=nakshatraInfo(moonSiderealLon), span=360/27, progressed=(norm360(moonSiderealLon)%span)/span;
   const lord=n.lord, total=DASHA_YEARS[lord], balance=total*(1-progressed);
-  if (!lord || !Number.isFinite(total) || !Number.isFinite(balance)) {
-    throw new Error("Unable to calculate Vimshottari Dasha from Moon longitude.");
-  }
-  let idx=DASHA_ORDER.indexOf(lord), start=new Date(date.getTime());
+  if (!lord || !Number.isFinite(total) || !Number.isFinite(balance)) throw new Error("Unable to calculate Vimshottari Dasha from Moon longitude.");
+  const idx=DASHA_ORDER.indexOf(lord), elapsed=total-balance;
+  let fullStart=addDays(date,-elapsed), start=fullStart;
   const periods=[];
-  // Show the birth mahadasha balance followed by the next 8 periods.
   for(let i=0;i<9;i++){
-    const name=DASHA_ORDER[(idx+i)%9], years=i===0?balance:DASHA_YEARS[name];
-    const end=new Date(start.getTime()+years*365.2425*86400000);
-    periods.push({lord:name,years:Number(years.toFixed(2)),start:start.toISOString().slice(0,10),end:end.toISOString().slice(0,10)});
+    const name=DASHA_ORDER[(idx+i)%9], years=DASHA_YEARS[name];
+    const end=addDays(start,years);
+    if(end>date){
+      const visibleStart=start<date?date:start;
+      periods.push({lord:name,years:Number(years.toFixed(2)),start:isoDate(visibleStart),end:isoDate(end),antardashas:buildAntardasha(name,start,end,date)});
+    }
     start=end;
   }
-  return {balanceYears:Number(balance.toFixed(2)),periods};
+  return {
+    balanceYears:Number(balance.toFixed(2)),
+    order:DASHA_ORDER,
+    periods,
+    current:{mahadasha:null,antardasha:null,pratyantardasha:null}
+  };
 }
 function calculateVedicChart({date,time,lat,lon,height=0}){
   if(!Astronomy) throw new Error("Astrology engine dependency is unavailable on the server.");
@@ -1378,9 +1455,16 @@ function calculateVedicChart({date,time,lat,lon,height=0}){
     const z=zodiac(sid), nk=nakshatraInfo(sid);
     planets.push({name:ta,longitude:Number(sid.toFixed(6)),degree:degText(sid),rasi:z.sign,nakshatra:nk.name,pada:nk.pada,lord:nk.lord});
   }
-  const moon=planets.find(p=>p.name==="சந்திரன்"), ascLon=ascendantLongitude(dt,latitude,longitude), asc=zodiac(ascLon), ascNak=nakshatraInfo(ascLon);
+  const moon=planets.find(p=>p.name==="சந்திரன்"), ascLon=ascendantLongitude(dt,latitude,longitude);
+  const ascTropical=zodiac(ascLon), ascSidLon=siderealLon(ascLon,dt), asc=zodiac(ascSidLon), ascNak=nakshatraInfo(ascSidLon);
+  const cusps=bhavaCuspsEqual(ascSidLon);
+  const bhavas=cusps.map((c,i)=>({house:i+1,longitude:Number(c.toFixed(6)),degree:degText(c),rasi:zodiac(c).sign,nakshatra:nakshatraInfo(c).name}));
+  const enrichedPlanets=planets.map(p=>({...p,navamsa:navamsaData(p.longitude),bhava:houseFromCusp(p.longitude,ascSidLon)}));
+  const navamsaLagna=navamsaData(ascSidLon);
+  const d9Planets=[{name:"லக்னம்",longitude:Number(ascSidLon.toFixed(6)),degree:degText(ascSidLon),rasi:asc.sign,navamsa:navamsaLagna,bhava:1},...enrichedPlanets];
+  const lst=meanSiderealTime(dt,longitude);
   const dashas=dashaAtBirth(moon.longitude,dt);
-  return {ok:true,engine:"Astronomy Engine + Lahiri-style sidereal conversion",timezone:"Asia/Kolkata",ayanamsa:Number(ayan.toFixed(6)),birth:{date,time,latitude,longitude},lagna:{longitude:Number(ascLon.toFixed(6)),degree:degText(ascLon),rasi:asc.sign,nakshatra:ascNak.name,pada:ascNak.pada},moonRasi:moon.rasi,moonNakshatra:moon.nakshatra,moonPada:moon.pada,planets,dashas,calculatedAt:new Date().toISOString()};
+  return {ok:true,engine:"Astronomy Engine + Lahiri-style sidereal conversion",houseSystem:"Equal House (30°) — Bhava Sphuta",timezone:"Asia/Kolkata",ayanamsa:Number(ayan.toFixed(6)),birth:{date,time,latitude,longitude,utc:dt.toISOString()},astronomy:{localSiderealTimeDegrees:Number(lst.toFixed(8)),latitude:Number(latitude.toFixed(8)),longitude:Number(longitude.toFixed(8))},lagna:{longitude:Number(ascSidLon.toFixed(6)),tropicalLongitude:Number(ascLon.toFixed(6)),degree:degText(ascSidLon),rasi:asc.sign,nakshatra:ascNak.name,pada:ascNak.pada},moonRasi:moon.rasi,moonNakshatra:moon.nakshatra,moonPada:moon.pada,planets:enrichedPlanets,dashas,bhavas,navamsa:{lagna:navamsaLagna,planets:d9Planets},calculatedAt:new Date().toISOString()};
 }
 app.post("/api/horoscope/calculate", async (req,res)=>{
   try {
