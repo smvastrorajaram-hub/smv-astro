@@ -125,11 +125,22 @@ function calculateSwiss({date,time,lat,lon,height=0,houseSystem,timezone='Asia/K
   for(const [name,sid] of [['ராகு',rahu],['கேது',ketu]]){ const z=zodiac(sid), nk=nakshatra(sid); planets.push({name,longitude:Number(sid.toFixed(8)),degree:degText(sid),rasi:z.sign,nakshatra:nk.name,pada:nk.pada,lord:nk.lord,speed:0,navamsa:navamsa(sid)}); }
   // Numeric Lahiri ayanamsa for the UI. sweph returns {flag,error,data}.
   // Keep the label separate so the frontend can safely format the numeric value.
+  // sweph 2.10.3-7 bindings may expose swe_get_ayanamsa_ut() as either
+  // a numeric return value or an Ayanamsa result object { flag, error, data }.
+  // Normalize both forms instead of assuming .data is always present.
   const ayRes = typeof swe.get_ayanamsa_ut === 'function' ? swe.get_ayanamsa_ut(jdUt) : null;
-  if(!ayRes || ayRes.error || !Number.isFinite(Number(ayRes.data))){
-    throw new Error(`அயனாம்சம்: Swiss Ephemeris returned invalid data${ayRes?.error ? ` (${ayRes.error})` : ''}`);
+  let ayanamsaValue = null;
+  if(Number.isFinite(Number(ayRes))){
+    ayanamsaValue = Number(ayRes);
+  } else if(ayRes && typeof ayRes === 'object'){
+    if(ayRes.error) throw new Error(`அயனாம்சம்: ${ayRes.error}`);
+    if(ayRes.flag !== undefined && Number(ayRes.flag) < 0) throw new Error(`அயனாம்சம்: Swiss Ephemeris failed (flag ${ayRes.flag})`);
+    const rawAyan = Array.isArray(ayRes.data) ? ayRes.data[0] : ayRes.data;
+    if(Number.isFinite(Number(rawAyan))) ayanamsaValue = Number(rawAyan);
   }
-  const ayanamsaValue=Number(ayRes.data);
+  if(!Number.isFinite(ayanamsaValue)){
+    throw new Error('அயனாம்சம்: Swiss Ephemeris returned invalid data');
+  }
   const hs=houseSystem || process.env.HOUSE_SYSTEM || 'S';
   const hres=swe.houses_ex2(jdUt, C.SEFLG_SIDEREAL, latitude, longitude, hs);
   // houses_ex2() returns data as an object { houses, points }, unlike calc()/utc_to_jd()
