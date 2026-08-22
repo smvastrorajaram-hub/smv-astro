@@ -1163,6 +1163,37 @@ textarea[id^="adminAns_"]{
 }
 </style>
 <style>@media print{header,footer,.action-row,#quickActions,#approved-astrologers,#faq,#contact,#register-flow,#dashboard,#admin,#astro-register-form,#astro-flow,#ask-flow{display:none!important}body{background:#fff!important}.container{padding:0!important}.feature-section{display:none!important}#tamil-horoscope,#english-horoscope{display:block!important}.card{box-shadow:none!important;border:0!important}}</style>
+
+<style id="smv-v147-readable-dasha">
+/* V147 comfortable reading: larger horoscope typography on mobile and desktop. */
+#tamilHoroscopeResult, #englishHoroscopeResult{font-size:16px;line-height:1.65}
+#tamilHoroscopeResult .small, #englishHoroscopeResult .small{font-size:14px;line-height:1.6}
+#tamilHoroscopeResult h2, #englishHoroscopeResult h2{font-size:clamp(26px,4vw,34px);line-height:1.25}
+#tamilHoroscopeResult h3, #englishHoroscopeResult h3{font-size:clamp(20px,3vw,26px);line-height:1.3}
+#tamilHoroscopeResult .stat, #englishHoroscopeResult .stat{font-size:16px}
+#tamilHoroscopeResult .data-table, #englishHoroscopeResult .data-table{font-size:15px}
+#tamilHoroscopeResult .data-table th, #englishHoroscopeResult .data-table th{font-size:15px;font-weight:800}
+#tamilHoroscopeResult .south-rasi-cell .sign, #englishHoroscopeResult .south-rasi-cell .sign{font-size:clamp(14px,2.6vw,18px)}
+#tamilHoroscopeResult .south-rasi-cell .planet-line, #englishHoroscopeResult .south-rasi-cell .planet-line{font-size:clamp(13px,2.5vw,17px);line-height:1.45}
+#tamilHoroscopeResult .south-rasi-cell .planet-degree, #englishHoroscopeResult .south-rasi-cell .planet-degree{font-size:.9em}
+#tamilHoroscopeResult .dasha-head, #englishHoroscopeResult .dasha-head{font-size:16px;min-height:52px}
+#tamilHoroscopeResult .dasha-title, #englishHoroscopeResult .dasha-title{font-size:17px}
+#tamilHoroscopeResult .dasha-dates, #englishHoroscopeResult .dasha-dates{font-size:14px}
+#tamilHoroscopeResult .dasha-subtable, #englishHoroscopeResult .dasha-subtable{font-size:14px}
+.smv-dasha-next{margin:0 0 12px;padding:12px 14px;border:1px solid #d8b866;border-radius:11px;background:#fff8e9;font-size:15px;line-height:1.65}
+.smv-dasha-next b{color:#7e1818}
+@media(max-width:760px){
+  #tamilHoroscopeResult, #englishHoroscopeResult{font-size:16px}
+  #tamilHoroscopeResult .small, #englishHoroscopeResult .small{font-size:14px}
+  #tamilHoroscopeResult .data-table, #englishHoroscopeResult .data-table{font-size:14px}
+  #tamilHoroscopeResult .data-table th, #englishHoroscopeResult .data-table th{font-size:14px}
+  #tamilHoroscopeResult .south-rasi-cell .planet-line, #englishHoroscopeResult .south-rasi-cell .planet-line{font-size:14px}
+  #tamilHoroscopeResult .south-rasi-cell .sign, #englishHoroscopeResult .south-rasi-cell .sign{font-size:15px}
+  #tamilHoroscopeResult .dasha-head, #englishHoroscopeResult .dasha-head{font-size:15px;padding:13px 12px}
+  #tamilHoroscopeResult .dasha-title, #englishHoroscopeResult .dasha-title{font-size:16px}
+  #tamilHoroscopeResult .dasha-dates, #englishHoroscopeResult .dasha-dates{font-size:13px}
+}
+</style>
 </head>
 <body>
 <header>
@@ -1431,7 +1462,7 @@ try{
 const RAZORPAY_BACKEND_URL="https://smv-astro-1fco.onrender.com";
 // Single backend URL used by all protected API calls, including astrologer answer submission.
 // Keep this in the main Firebase module so it is available to the answer-submit handler.
-const BACKEND=RAZORPAY_BACKEND_URL;
+const BACKEND=RAZORPAY_BACKEND_URL; window.SMV_BACKEND_URL=RAZORPAY_BACKEND_URL;
 let firebaseFunctionsPromise=null;
 async function ensureFirebaseFunctions(){
   if(functions && httpsCallableFn) return {functions,httpsCallable:httpsCallableFn};
@@ -4075,14 +4106,36 @@ window.__SMV_APP_READY=true;
           <button type="button" class="dasha-head" aria-expanded="false"><span><span class="dasha-title">${esc(planetTa[p.lord]||p.lord)}</span> <span class="dasha-dates">${esc(p.start)} → ${esc(p.end)}</span></span><span class="dasha-arrow">▶</span></button>
           <div class="dasha-body"><div class="dasha-breadcrumb">${esc(path+'>'+p.lord)} · ${level===1?'மகாதசை':''}</div>${has?`<div class="small" style="margin-bottom:8px">${esc(label)} — 9 துணைக் காலங்கள்</div>${child.map((x)=>`<div class="dasha-node" data-level="2" data-path="${esc(p.lord+'>'+x.lord)}"><button type="button" class="dasha-head" aria-expanded="false"><span><span class="dasha-title">${esc(x.lord)}</span> <span class="dasha-dates">${esc(x.start)} → ${esc(x.end)}</span></span><span class="dasha-arrow">▶</span></button><div class="dasha-body"><div class="dasha-breadcrumb">${esc(p.lord+' → '+x.lord)} · புக்தி / அந்தர்தசை</div>${x.pratyantars?.length?`<table class="dasha-subtable"><thead><tr><th>அந்தரம் / பிரத்யந்தர்தசை</th><th>தொடக்கம்</th><th>முடிவு</th></tr></thead><tbody>${x.pratyantars.map(y=>`<tr><td><b>${esc(y.lord)}</b></td><td>${esc(y.start)}</td><td>${esc(y.end)}</td></tr>`).join('')}</tbody></table>`:'<div class="dasha-empty">அந்தர காலங்கள் இல்லை.</div>'}</div></div>`).join('')}`:'<div class="dasha-empty">புக்தி தகவல் இல்லை.</div>'}</div></div>`;
       };
-      dashaTree.innerHTML=(d.dashas.periods||[]).map(p=>periodHtml(p,1,'மகாதசை')).join('');
-      dashaTree.querySelectorAll('.dasha-head').forEach(btn=>btn.addEventListener('click',()=>{const node=btn.parentElement;const open=!node.classList.contains('open');node.classList.toggle('open',open);btn.setAttribute('aria-expanded',String(open));}));
+      const periods=d.dashas.periods||[];
+      dashaTree.innerHTML=periods.map(p=>periodHtml(p,1,'மகாதசை')).join('');
+      dashaTree.querySelectorAll('.dasha-head').forEach(btn=>btn.addEventListener('click',(ev)=>{ev.preventDefault();ev.stopPropagation();const node=btn.parentElement;const open=!node.classList.contains('open');node.classList.toggle('open',open);btn.setAttribute('aria-expanded',String(open));}));
+      // V147: show the current/next Bhukti and Antara immediately, while retaining full tap-to-expand details.
+      const now=new Date();
+      const contains=(x)=>{const a=new Date(String(x.start)+'T00:00:00');const b=new Date(String(x.end)+'T23:59:59');return a<=now&&now<=b;};
+      let curMd=periods.find(contains)||periods[0];
+      let curBi=curMd?.antardashas?.find(contains)||curMd?.antardashas?.[0];
+      const mdIndex=Math.max(0,periods.indexOf(curMd));
+      const biIndex=curMd?.antardashas?Math.max(0,curMd.antardashas.indexOf(curBi)):-1;
+      const nextMd=periods[mdIndex+1]||null;
+      const nextBi=(curMd?.antardashas?.[biIndex+1])||nextMd?.antardashas?.[0]||null;
+      const nextAnt=curBi?.pratyantars?.find(contains);
+      const antIndex=curBi?.pratyantars?Math.max(0,curBi.pratyantars.indexOf(nextAnt)):-1;
+      const nextAntNext=(curBi?.pratyantars?.[antIndex+1])||nextBi?.pratyantars?.[0]||null;
+      const summary=document.createElement('div'); summary.className='smv-dasha-next';
+      const lord=(x)=>x?.lord||'—', dates=x=>x?`${x.start} → ${x.end}`:'—';
+      summary.innerHTML=`<b>Current / Next Dasha</b><br>Mahadasha: <b>${esc(lord(curMd))}</b> (${esc(dates(curMd))})<br>Bhukti: <b>${esc(lord(curBi))}</b> (${esc(dates(curBi))}) → Next: <b>${esc(lord(nextBi))}</b> (${esc(dates(nextBi))})<br>Antara: <b>${esc(lord(nextAnt))}</b> (${esc(dates(nextAnt))}) → Next: <b>${esc(lord(nextAntNext))}</b> (${esc(dates(nextAntNext))})`;
+      dashaTree.prepend(summary);
+      // Open the current Mahadasha and current Bhukti so the next levels are visible without requiring multiple taps.
+      const mdNode=dashaTree.querySelector('.dasha-node[data-level="1"]');
+      if(mdNode){mdNode.classList.add('open');mdNode.querySelector(':scope > .dasha-head')?.setAttribute('aria-expanded','true');}
+      const firstOpen=mdNode?.querySelector('.dasha-node[data-level="2"]');
+      if(firstOpen){firstOpen.classList.add('open');firstOpen.querySelector(':scope > .dasha-head')?.setAttribute('aria-expanded','true');}
     }
     result.classList.remove('hidden');
     if(getHoroscopeLang()==='en') applyEnglishToHoroscope(result);
     $('printTamilHoroscope')?.addEventListener('click',()=>window.print());
     $('copyTamilHoroscope')?.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(result.innerText);alert('ஜாதக கணக்கீட்டு உரை நகலெடுக்கப்பட்டது.');}catch(e){alert('நகலெடுக்க முடியவில்லை.');}});
-    $('generateAIFuture')?.addEventListener('click',()=>generateAIFuture(d,name));
+    $('generateAIFuture')?.addEventListener('click',(ev)=>{ev.preventDefault();ev.stopPropagation();generateAIFuture(d,name);});
     result.scrollIntoView({behavior:'smooth',block:'start'});
   }
   async function generateAIFuture(d,name){
@@ -4099,7 +4152,7 @@ window.__SMV_APP_READY=true;
       dashas:(d.dashas?.mahadashas||d.dashas?.periods||[]).slice(0,12).map(x=>({name:x.name,start:x.start,end:x.end}))
     };
     try{
-      const r=await fetch(BACKEND_URL+'/api/horoscope/ai-future',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chart,language:lang})});
+      const r=await fetch((window.SMV_BACKEND_URL||'https://smv-astro-1fco.onrender.com')+'/api/horoscope/ai-future',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chart,language:lang})});
       const body=await r.json().catch(()=>({}));
       if(!r.ok)throw new Error(body.error||`AI generation failed (HTTP ${r.status})`);
       const text=String(body.text||'').trim();
@@ -4130,7 +4183,7 @@ window.__SMV_APP_READY=true;
       }
       const normalizedTime=normalizeHoroscopeTime(time);
       if(!normalizedTime) throw new Error('பிறந்த நேரம் சரியாக உள்ளிடவும். உதாரணம்: 22:05 (10:05 PM).');
-      const r=await fetch(BACKEND_URL+'/api/horoscope/calculate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({date,time:normalizedTime,lat:Number(lat),lon:Number(lon),height:0,timezone:'Asia/Kolkata',utcOffsetMinutes:330,houseSystem:'S'})});
+      const r=await fetch((window.SMV_BACKEND_URL||'https://smv-astro-1fco.onrender.com')+'/api/horoscope/calculate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({date,time:normalizedTime,lat:Number(lat),lon:Number(lon),height:0,timezone:'Asia/Kolkata',utcOffsetMinutes:330,houseSystem:'S'})});
       const d=await r.json().catch(()=>({})); if(!r.ok) throw new Error(d.error||`Calculation failed (HTTP ${r.status})`); render(d);
     }catch(e){alert(e?.message||String(e));}
     finally{if(btn){btn.disabled=false;btn.textContent='🔮 தமிழில் ஜாதகம் உருவாக்குக';}}
@@ -4843,7 +4896,7 @@ document.addEventListener("click",function(e){
     function statusText(t,c){status.textContent=t||'';status.className='smv-location-status'+(c?' '+c:'');}
     function choose(x){place.value=x.place||'';lat.value=Number(x.latitude).toFixed(6);lon.value=Number(x.longitude).toFixed(6);place.dataset.locationSelected='1';place.dataset.latitude=String(x.latitude);place.dataset.longitude=String(x.longitude);clear();statusText('Location selected — latitude and longitude filled automatically.','ok');}
     function render(items){clear();if(!items.length){statusText('No matching location found. Please type a little more.','err');return;}items.forEach(x=>{const b=document.createElement('button');b.type='button';b.className='smv-location-suggestion';b.setAttribute('role','option');b.textContent=x.place;b.addEventListener('click',()=>choose(x));list.appendChild(b);});list.classList.add('show');statusText('Select your exact place from the list.','');}
-    async function search(q){if(q.length<2){clear();statusText('','');return;}if(q===lastQuery)return;lastQuery=q;if(controller)controller.abort();controller=new AbortController();statusText('Searching location…','');try{const r=await fetch(BACKEND_URL+'/api/geocode?q='+encodeURIComponent(q),{signal:controller.signal,headers:{Accept:'application/json'},cache:'no-store'});const data=await r.json().catch(()=>({}));if(!r.ok)throw new Error(data.error||'Location search failed');render(Array.isArray(data.results)?data.results:[]);}catch(e){if(e.name==='AbortError')return;clear();statusText(e.message||'Unable to search location.','err');}}
+    async function search(q){if(q.length<2){clear();statusText('','');return;}if(q===lastQuery)return;lastQuery=q;if(controller)controller.abort();controller=new AbortController();statusText('Searching location…','');try{const r=await fetch((window.SMV_BACKEND_URL||'https://smv-astro-1fco.onrender.com')+'/api/geocode?q='+encodeURIComponent(q),{signal:controller.signal,headers:{Accept:'application/json'},cache:'no-store'});const data=await r.json().catch(()=>({}));if(!r.ok)throw new Error(data.error||'Location search failed');render(Array.isArray(data.results)?data.results:[]);}catch(e){if(e.name==='AbortError')return;clear();statusText(e.message||'Unable to search location.','err');}}
     place.addEventListener('input',()=>{place.dataset.locationSelected='0';lat.value='';lon.value='';lastQuery='';clearTimeout(timer);timer=setTimeout(()=>search(place.value.trim()),500);});
     place.addEventListener('focus',()=>{if(place.value.trim().length>=2&&list.children.length)list.classList.add('show');});
     document.addEventListener('click',e=>{if(!parent.contains(e.target))clear();});
@@ -4873,7 +4926,9 @@ document.addEventListener("click",function(e){
       if(source&&target&&source.innerHTML.trim()){
         target.innerHTML=source.innerHTML;target.classList.remove('hidden');source.classList.add('hidden');source.innerHTML='';
         // Keep the public English section self-contained.
-        target.scrollIntoView({behavior:'smooth',block:'start'});
+        applyEnglishToHoroscope(target);
+         target.querySelector('#generateAIFuture')?.addEventListener('click',ev=>{ev.preventDefault();ev.stopPropagation();},{once:false});
+         target.scrollIntoView({behavior:'smooth',block:'start'});
       }else throw new Error('Horoscope result was not returned.');
     }catch(e){alert(e?.message||String(e));}
     finally{if(btn){btn.disabled=false;btn.textContent='🔮 Create Horoscope in English';}}
