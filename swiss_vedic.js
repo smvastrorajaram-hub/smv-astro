@@ -86,7 +86,7 @@ function calculateSwiss({date,time,lat,lon,height=0,houseSystem,timezone='Asia/K
   const utc=swe.utc_to_jd(uy,umo,ud,uhh,umm,0,C.SE_GREG_CAL); fail(utc,'UTC/JD');
   const [jdEt,jdUt]=utc.data;
   setEphe();
-  if(typeof swe.set_sid_mode==='function' && C.SE_SIDM_LAHIRI!==undefined) swe.set_sid_mode(C.SE_SIDM_LAHIRI);
+  if(typeof swe.set_sid_mode==='function' && C.SE_SIDM_LAHIRI!==undefined) swe.set_sid_mode(C.SE_SIDM_LAHIRI, 0, 0);
   const flags=C.SEFLG_SWIEPH|C.SEFLG_SIDEREAL|C.SEFLG_SPEED;
   const planets=[];
   for(const [ta,id] of PLANETS){ const r=swe.calc(jdEt,id,flags); fail(r,ta); const sid=norm360(r.data[0]); const z=zodiac(sid), nk=nakshatra(sid); planets.push({name:ta,longitude:Number(sid.toFixed(8)),degree:degText(sid),rasi:z.sign,nakshatra:nk.name,pada:nk.pada,lord:nk.lord,speed:Number((r.data[3]||0).toFixed(8)),navamsa:navamsa(sid)}); }
