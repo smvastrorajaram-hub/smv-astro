@@ -3847,6 +3847,15 @@ window.__SMV_APP_READY=true;
         <div class="stat"><span class="small">🧭 அயனாம்சம்</span><p>${d.ayanamsa.toFixed(3)}°<br><span class="small">Lahiri-style sidereal</span></p></div>
         <div class="stat"><span class="small">⚙️ Calculation</span><p>Astronomy Engine<br><span class="small">sidereal/Vedic mapping</span></p></div>
       </div>
+      <h3 style="margin-top:22px">🗺️ ராசி கட்டம்</h3>
+      <div id="rasiChart" style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;max-width:640px;margin:0 auto"></div>
+      <h3 style="margin-top:22px">📍 பிறப்பு விவரங்கள்</h3>
+      <div class="grid">
+        <div class="stat"><span class="small">பிறந்த இடம்</span><p><b>${esc($('tamilBirthPlace')?.value||'—')}</b></p></div>
+        <div class="stat"><span class="small">Latitude</span><p><b>${Number(d.birth.latitude).toFixed(6)}</b></p></div>
+        <div class="stat"><span class="small">Longitude</span><p><b>${Number(d.birth.longitude).toFixed(6)}</b></p></div>
+        <div class="stat"><span class="small">ராசி</span><p><b>${esc(d.moonRasi)}</b></p></div>
+      </div>
       <h3 style="margin-top:22px">🪐 கிரக நிலைகள்</h3>
       <div style="overflow:auto"><table class="data-table"><thead><tr><th>கிரகம்</th><th>ராசி</th><th>பாகை</th><th>நட்சத்திரம்</th></tr></thead><tbody>${rows(d.planets)}</tbody></table></div>
       <h3 style="margin-top:22px">📅 விம்சோத்தரி மகாதசா</h3>
@@ -3856,6 +3865,12 @@ window.__SMV_APP_READY=true;
       <p class="small" style="margin-top:15px"><b>குறிப்பு:</b> இது astronomical ephemeris அடிப்படையிலான கணக்கீட்டு layer. பாரம்பரிய ஜோதிட பலன்கள் விளக்க/நம்பிக்கை சார்ந்தவை; முக்கிய வாழ்க்கை முடிவுகளுக்கு இதை ஒரே ஆதாரமாக பயன்படுத்த வேண்டாம்.</p>
       <div class="action-row"><button class="btn" type="button" id="printTamilHoroscope">🖨️ அச்சிட / PDF ஆக சேமிக்க</button><button class="btn gray" type="button" id="copyTamilHoroscope">📋 உரையை நகலெடுக்க</button></div>
     </div>`;
+    const chart=$('rasiChart');
+    if(chart){
+      const houses=Array.from({length:12},(_,i)=>({house:i+1,sign:rasiList[(rasiIndex(d.lagna.rasi)+i)%12],items:[]}));
+      (d.planets||[]).forEach(p=>{const si=rasiIndex(p.rasi); if(si>=0){const hi=(si-rasiIndex(d.lagna.rasi)+12)%12; houses[hi].items.push(p.name);}});
+      chart.innerHTML=houses.map(h=>`<div class="card" style="min-height:80px;padding:8px;text-align:center"><b>${h.house}</b><br><span>${esc(h.sign)}</span><br><small>${h.items.length?esc(h.items.join(' · ')):'—'}</small></div>`).join('');
+    }
     result.classList.remove('hidden');
     $('printTamilHoroscope')?.addEventListener('click',()=>window.print());
     $('copyTamilHoroscope')?.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(result.innerText);alert('ஜாதக கணக்கீட்டு உரை நகலெடுக்கப்பட்டது.');}catch(e){alert('நகலெடுக்க முடியவில்லை.');}});
