@@ -123,6 +123,13 @@ function calculateSwiss({date,time,lat,lon,height=0,houseSystem,timezone='Asia/K
   for(const [ta,id] of PLANETS){ const calc=calcPlanetSafe(jdEt,id,flags,moshierFlags,ta,useSwissFiles); const r=calc.result; calculationMode=calc.mode==='MOSEPH'?'MOSEPH':calculationMode; const sid=norm360(r.data[0]); const z=zodiac(sid), nk=nakshatra(sid); planets.push({name:ta,longitude:Number(sid.toFixed(8)),degree:degText(sid),rasi:z.sign,nakshatra:nk.name,pada:nk.pada,lord:nk.lord,speed:Number((r.data[3]||0).toFixed(8)),navamsa:navamsa(sid)}); }
   const nodeCalc=calcPlanetSafe(jdEt,nodeId,flags,moshierFlags,'ராகு',useSwissFiles); calculationMode=nodeCalc.mode==='MOSEPH'?'MOSEPH':calculationMode; const rn=nodeCalc.result; const rahu=norm360(rn.data[0]), ketu=norm360(rahu+180);
   for(const [name,sid] of [['ராகு',rahu],['கேது',ketu]]){ const z=zodiac(sid), nk=nakshatra(sid); planets.push({name,longitude:Number(sid.toFixed(8)),degree:degText(sid),rasi:z.sign,nakshatra:nk.name,pada:nk.pada,lord:nk.lord,speed:0,navamsa:navamsa(sid)}); }
+  // Numeric Lahiri ayanamsa for the UI. sweph returns {flag,error,data}.
+  // Keep the label separate so the frontend can safely format the numeric value.
+  const ayRes = typeof swe.get_ayanamsa_ut === 'function' ? swe.get_ayanamsa_ut(jdUt) : null;
+  if(!ayRes || ayRes.error || !Number.isFinite(Number(ayRes.data))){
+    throw new Error(`அயனாம்சம்: Swiss Ephemeris returned invalid data${ayRes?.error ? ` (${ayRes.error})` : ''}`);
+  }
+  const ayanamsaValue=Number(ayRes.data);
   const hs=houseSystem || process.env.HOUSE_SYSTEM || 'S';
   const hres=swe.houses_ex2(jdUt, C.SEFLG_SIDEREAL, latitude, longitude, hs);
   // houses_ex2() returns data as an object { houses, points }, unlike calc()/utc_to_jd()
@@ -153,7 +160,7 @@ function calculateSwiss({date,time,lat,lon,height=0,houseSystem,timezone='Asia/K
   const d9Lagna=navamsa(ascLon);
   const moon=enriched.find(p=>p.name==='சந்திரன்');
   return {
-    ok:true, engine:'Swiss Ephemeris', engineVersion:'sweph 2.10.3-7 / Swiss Ephemeris 2.10.03', ephemerisMode:calculationMode, ephemerisFilesPresent:useSwissFiles, zodiac:'Sidereal', ayanamsa:'Lahiri', houseSystem:hs==='S'?'Sripati':hs==='P'?'Placidus':hs, ephemerisPath:process.env.SWISSEPH_EPHE_PATH||'./ephe',
+    ok:true, engine:'Swiss Ephemeris', engineVersion:'sweph 2.10.3-7 / Swiss Ephemeris 2.10.03', ephemerisMode:calculationMode, ephemerisFilesPresent:useSwissFiles, zodiac:'Sidereal', ayanamsa:ayanamsaValue, ayanamsaName:'Lahiri', houseSystem:hs==='S'?'Sripati':hs==='P'?'Placidus':hs, ephemerisPath:process.env.SWISSEPH_EPHE_PATH||'./ephe',
     birth:{date,time,timezone,utcOffsetMinutes:offsetMinutes,utcDate:`${uy}-${String(umo).padStart(2,'0')}-${String(ud).padStart(2,'0')}`,utcTime:`${String(uhh).padStart(2,'0')}:${String(umm).padStart(2,'0')}`,latitude,longitude,utc_jd:Number(jdUt.toFixed(8)),et_jd:Number(jdEt.toFixed(8))},
     lagna:{longitude:Number(ascLon.toFixed(8)),degree:degText(ascLon),rasi:ascZ.sign,nakshatra:ascNk.name,pada:ascNk.pada,mc:Number.isFinite(mc)?Number(norm360(mc).toFixed(8)):null},
     moonRasi:moon.rasi,moonNakshatra:moon.nakshatra,moonPada:moon.pada,

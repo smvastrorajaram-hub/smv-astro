@@ -3873,7 +3873,7 @@ window.__SMV_APP_READY=true;
       <div class="grid" style="margin-top:15px">
         <div class="stat"><span class="small">🔱 லக்னம்</span><p><b>${esc(d.lagna.rasi)}</b> · ${esc(d.lagna.degree)}</p><p class="small">${esc(d.lagna.nakshatra)} · பாதம் ${d.lagna.pada}<br>நெடுவரை: ${Number(d.lagna.longitude).toFixed(4)}°</p></div>
         <div class="stat"><span class="small">🌙 சந்திர ராசி</span><p><b>${esc(d.moonRasi)}</b> · ${esc(d.moonNakshatra)}<br>பாதம் ${d.moonPada}</p></div>
-        <div class="stat"><span class="small">🧭 அயனாம்சம்</span><p>${d.ayanamsa.toFixed(3)}°<br><span class="small">Lahiri-style sidereal</span></p></div>
+        <div class="stat"><span class="small">🧭 அயனாம்சம்</span><p>${Number(d.ayanamsa).toFixed(3)}°<br><span class="small">${esc(d.ayanamsaName||'Lahiri')} sidereal</span></p></div>
         <div class="stat"><span class="small">⚙️ Calculation</span><p><b>Swiss Ephemeris</b><br><span class="small">Lahiri sidereal · real house cusps</span></p></div>
       </div>
       <h3 style="margin-top:22px">🗺️ ராசி கட்டம்</h3>
