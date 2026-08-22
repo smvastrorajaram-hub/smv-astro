@@ -1634,6 +1634,17 @@ function hidePublicHoroscopeSections(){
 }
 if($("authBtn") && $("authBtn").dataset.smvAuthBound!=="1"){ $("authBtn").dataset.smvAuthBound="1"; $("authBtn").addEventListener("click",async()=>{try{hidePublicHoroscopeSections();if(currentUser){await logoutToHome();}else{openAuth("login");}}catch(e){console.error("SMV login action failed",e);}}); }
 $("registerNav")?.addEventListener("click",()=>openRegister());
+
+// V149: Horoscope navigation must restore both public horoscope sections after Login
+// temporarily hides them. It does not change the website-wide language.
+$("horoscopeNav")?.addEventListener("click",(e)=>{
+  e.preventDefault(); e.stopPropagation();
+  ["horoscope-tools","tamil-horoscope","english-horoscope"].forEach(id=>show(id));
+  window.__smvPublicHoroscopeVisible = true;
+  const target=$("tamil-horoscope");
+  if(target) target.scrollIntoView({behavior:"smooth",block:"start"});
+});
+
   $("customerRegBtn")?.addEventListener("click",()=>openAuth("register"));
 $("privateConsultBtn")?.addEventListener("click",()=>openQuestionService());
 $("astroRegBtn")?.addEventListener("click",openAstroRegister);
@@ -3941,7 +3952,7 @@ window.__SMV_APP_READY=true;
     'மேஷம்':'Aries','ரிஷபம்':'Taurus','மிதுனம்':'Gemini','கடகம்':'Cancer','சிம்மம்':'Leo','கன்னி':'Virgo','துலாம்':'Libra','விருச்சிகம்':'Scorpio','தனுசு':'Sagittarius','மகரம்':'Capricorn','கும்பம்':'Aquarius','மீனம்':'Pisces',
     'கேது':'Ketu','சுக்கிரன்':'Venus','சூரியன்':'Sun','சந்திரன்':'Moon','செவ்வாய்':'Mars','ராகு':'Rahu','குரு':'Jupiter','சனி':'Saturn','புதன்':'Mercury','லக்னம்':'Ascendant',
     'அஸ்வினி':'Ashwini','பரணி':'Bharani','கார்த்திகை':'Krittika','ரோகிணி':'Rohini','மிருகசீரிடம்':'Mrigashira','திருவாதிரை':'Ardra','புனர்பூசம்':'Punarvasu','பூசம்':'Pushya','ஆயில்யம்':'Ashlesha','மகம்':'Magha','பூரம்':'Purva Phalguni','உத்திரம்':'Uttara Phalguni','ஹஸ்தம்':'Hasta','சித்திரை':'Chitra','சுவாதி':'Swati','விசாகம்':'Vishakha','அனுஷம்':'Anuradha','கேட்டை':'Jyeshtha','மூலம்':'Mula','பூராடம்':'Purva Ashadha','உத்திராடம்':'Uttara Ashadha','திருவோணம்':'Shravana','அவிட்டம்':'Dhanishta','சதயம்':'Shatabhisha','பூரட்டாதி':'Purva Bhadrapada','உத்திரட்டாதி':'Uttara Bhadrapada','ரேவதி':'Revati',
-    'பாதம்':'Pada','பிறந்த தேதி':'Date of Birth','நேரம்':'Time','பிறந்த இடம்':'Place of Birth','ராசி':'Rasi','நட்சத்திரம்':'Nakshatra','நெடுவரை':'Longitude','சந்திர ராசி':'Moon Rasi','அயனாம்சம்':'Ayanamsa','பாவம்':'Bhava','பாவக':'Bhava','கட்டம்':'Chart','ஆரம்பம்':'Arambha','மத்தியம்':'Madhya','முடிவு':'Antya','ஸ்புடம்':'Sphuta','ஸ்புட ராசி':'Sphuta Rasi','கிரகங்கள்':'Planets','கிரகம்':'Planet','பாகை':'Degree','நவாம்சம்':'Navamsa','நவாம்ச பாதம்':'Navamsa Pada','நவாம்ச நிலைகள்':'Navamsa Positions','பிறப்பு விவரங்கள்':'Birth Details','கிரக நிலைகள்':'Planetary Positions','விம்சோத்தரி தசா':'Vimshottari Dasha','மகாதசை':'Mahadasha','புக்தி':'Bhukti','அந்தர்தசை':'Antardasha','அந்தரம்':'Antara','பிரத்யந்தர்தசை':'Pratyantara Dasha','தொடக்கம்':'Start','முடிவு':'End','அடுத்த நிலை தகவல் இல்லை.':'No next-level information.','புக்தி தகவல் இல்லை.':'No Bhukti information.','அந்தர காலங்கள் இல்லை.':'No Antara periods.','9 துணைக் காலங்கள்':'9 sub-periods',
+    'பாதம்':'Pada','பிறந்த தேதி':'Date of Birth','நேரம்':'Time','பிறந்த இடம்':'Place of Birth','ராசி':'Rasi','நட்சத்திரம்':'Nakshatra','நெடுவரை':'Longitude','சந்திர ராசி':'Moon Rasi','அயனாம்சம்':'Ayanamsa','பாவம்':'Bhava','பாவக':'Bhava','கட்டம்':'Chart','ஆரம்பம்':'Arambha','மத்தியம்':'Madhya','முடிவு':'Antya','ஸ்புடம்':'Sphuta','ஸ்புட ராசி':'Sphuta Rasi','கிரகங்கள்':'Planets','கிரகம்':'Planet','பாகை':'Degree','நவாம்சம்':'Navamsa','நவாம்ச பாதம்':'Navamsa Pada','நவாம்ச நிலைகள்':'Navamsa Positions','பிறப்பு விவரங்கள்':'Birth Details','கிரக நிலைகள்':'Planetary Positions','விம்சோத்தரி தசா':'Vimshottari Dasha','தற்போதைய / அடுத்த தசா':'Current / Next Dasha','அடுத்தது':'Next','அடுத்த புக்தி':'Next Bhukti','அடுத்த அந்தரம்':'Next Antara','மகாதசை':'Mahadasha','புக்தி':'Bhukti','அந்தர்தசை':'Antardasha','அந்தரம்':'Antara','பிரத்யந்தர்தசை':'Pratyantara Dasha','தொடக்கம்':'Start','முடிவு':'End','அடுத்த நிலை தகவல் இல்லை.':'No next-level information.','புக்தி தகவல் இல்லை.':'No Bhukti information.','அந்தர காலங்கள் இல்லை.':'No Antara periods.','9 துணைக் காலங்கள்':'9 sub-periods',
     'தமிழ் ஜாதக கணக்கீடு':'Horoscope Calculation','D-1 ராசி':'D-1 Rasi','நவாம்ச கட்டம் (D9)':'Navamsa Chart (D9)','ஒவ்வொரு கிரகத்தின் D9 நவாம்ச ராசி, லக்ன நவாம்சம் உட்பட.':'D9 Navamsa sign for each planet, including the Navamsa Ascendant.','பாவக கட்டம்':'Bhava Chart','பாவக கட்டம் (Bhava Table)':'Bhava Chart (Bhava Table)','நவாம்ச நிலைகள்':'Navamsa Positions','சரிபார்க்கப்பட்ட ஜாதகத் தரவை AI விளக்குகிறது...':'AI is interpreting the verified horoscope data...','AI எதிர்கால பலன்':'AI Future Insights','AI எதிர்கால பலன் உருவாக்குக':'Generate AI Future Insights','AI பலன் உருவாக்கப்படுகிறது...':'Generating AI Future Insights...','குறிப்பு':'Note','ஜாதக கணக்கீட்டு உரை நகலெடுக்கப்பட்டது.':'Horoscope calculation text copied.','நகலெடுக்க முடியவில்லை.':'Unable to copy.','மீட்டமை':'Reset','தமிழில் ஜாதகம் உருவாக்குக':'Create Horoscope in Tamil','தமிழ் ஜாதகம்':'Tamil Horoscope','தமிழ் ஜோதிட வழிகாட்டி':'Tamil Astrology Guide',
     'உங்கள் பெயர்':'Your name','நகரம், மாநிலம்':'City, State','எ.கா. 13.0827':'e.g. 13.0827','எ.கா. 80.2707':'e.g. 80.2707','எ.கா. ரோகிணி':'e.g. Rohini','நட்சத்திரம் (விருப்பம்)':'Nakshatra (Optional)','பெயர்':'Name','பிறந்த தேதி':'Date of Birth','பிறந்த நேரம்':'Birth Time','பிறந்த இடம்':'Birth Place','ராசி':'Rasi',
     'பிறந்த நேரம் சரியாக உள்ளிடவும். உதாரணம்: 22:05 (10:05 PM).':'Enter the birth time correctly. Example: 22:05 (10:05 PM).','பிறந்த தேதி மற்றும் பிறந்த நேரத்தை உள்ளிடவும்.':'Enter the date and time of birth.','முதலில் Birth Place-ல் காட்டப்படும் location suggestion-ஐ தேர்வு செய்யவும். Latitude மற்றும் Longitude தானாக நிரப்பப்படும்.':'First select the location suggestion shown for Birth Place. Latitude and Longitude will be filled automatically.','Birth Place-ஐ தேர்வு செய்யவும்; Latitude மற்றும் Longitude தானாக நிரப்பப்படும்.':'Select the Birth Place; Latitude and Longitude will be filled automatically.',
@@ -4032,12 +4043,6 @@ window.__SMV_APP_READY=true;
       <p class="small">மகாதசையை touch செய்தால் <b>புக்தி / அந்தர்தசை</b> திறக்கும். புக்தியை touch செய்தால் <b>அந்தரம் / பிரத்யந்தர்தசை</b> திறக்கும்.</p>
       <p class="small">பிறந்த நேர சந்திரனின் நட்சத்திரத்தை அடிப்படையாகக் கொண்ட ஆரம்ப மகாதசா balance: <b>${d.dashas.balanceYears} ஆண்டுகள்</b>.</p>
       <div id="dashaTree" class="dasha-tree"></div>
-      <div class="card" style="margin-top:16px;background:#fff8e9;border:1px solid rgba(140,91,28,.18)">
-        <b>✨ AI எதிர்கால பலன்</b>
-        <p style="margin:8px 0 12px">உங்கள் சரிபார்க்கப்பட்ட ஜாதகக் கணக்கீட்டு தரவை மட்டும் அடிப்படையாகக் கொண்டு தமிழ் AI விளக்கத்தை உருவாக்கலாம். AI கணக்கீட்டு தரவை மாற்றாது; எதிர்காலத்தை உறுதி செய்யாது.</p>
-        <button class="btn" type="button" id="generateAIFuture">🔮 AI எதிர்கால பலன் உருவாக்குக</button>
-        <div id="aiFutureResult" class="card hidden" style="margin-top:14px;background:#fff"></div>
-      </div>
       <p class="small" style="margin-top:15px"><b>குறிப்பு:</b> இது astronomical ephemeris அடிப்படையிலான கணக்கீட்டு layer. பாரம்பரிய ஜோதிட பலன்கள் விளக்க/நம்பிக்கை சார்ந்தவை; முக்கிய வாழ்க்கை முடிவுகளுக்கு இதை ஒரே ஆதாரமாக பயன்படுத்த வேண்டாம்.</p>
       <div class="action-row"><button class="btn" type="button" id="printTamilHoroscope">🖨️ அச்சிட / PDF ஆக சேமிக்க</button><button class="btn gray" type="button" id="copyTamilHoroscope">📋 உரையை நகலெடுக்க</button></div>
     </div>`;
@@ -4149,13 +4154,17 @@ window.__SMV_APP_READY=true;
     root.querySelectorAll('.dasha-head').forEach(btn=>{
       if(btn.dataset.smvBound==='1')return;
       btn.dataset.smvBound='1';
-      btn.addEventListener('click',(ev)=>{
+      const toggleDasha=(ev)=>{
         ev.preventDefault(); ev.stopPropagation();
         const node=btn.parentElement;
         const open=!node.classList.contains('open');
         node.classList.toggle('open',open);
         btn.setAttribute('aria-expanded',String(open));
-      });
+      };
+      // Mobile browsers fire a click after touchend. Binding both events caused
+      // the dasha node to open and immediately close again on touch devices.
+      // Use the normal click event only; it works for mouse, touch and keyboard.
+      btn.addEventListener('click',toggleDasha);
     });
     const mdNode=root.querySelector('.dasha-node[data-level="1"]');
     if(mdNode){
@@ -4236,6 +4245,11 @@ window.__SMV_APP_READY=true;
     generate();
   });
   $('clearTamilHoroscope')?.addEventListener('click',()=>{['tamilAstroName','tamilDob','tamilTob','tamilBirthPlace','tamilNakshatra','tamilLat','tamilLon'].forEach(id=>{if($(id))$(id).value='';});if($('tamilBirthPlace')){$('tamilBirthPlace').dataset.locationSelected='0';$('tamilBirthPlace').dataset.latitude='';$('tamilBirthPlace').dataset.longitude='';}if($('tamilRasi'))$('tamilRasi').value='மேஷம்';if($('tamilHoroscopeResult')){$('tamilHoroscopeResult').classList.add('hidden');$('tamilHoroscopeResult').innerHTML='';}if($('englishHoroscopeResult')){$('englishHoroscopeResult').classList.add('hidden');$('englishHoroscopeResult').innerHTML='';}});
+  // V149: expose horoscope helpers so the separate English section can safely
+  // reuse the renderer without relying on JavaScript lexical scope from another IIFE.
+  window.__smvApplyEnglishToHoroscope = applyEnglishToHoroscope;
+  window.__smvBindHoroscopeInteractions = bindHoroscopeInteractions;
+  window.__smvGenerateAIFuture = generateAIFuture;
   window.__smvGenerateHoroscopeEngine=generate;
 })();
 </script>
@@ -4967,8 +4981,10 @@ document.addEventListener("click",function(e){
       if(source&&target&&source.innerHTML.trim()){
         target.innerHTML=source.innerHTML;target.classList.remove('hidden');source.classList.add('hidden');source.innerHTML='';
         // The English result is a new DOM tree, so event listeners must be rebound after copying.
-        applyEnglishToHoroscope(target);
-        bindHoroscopeInteractions(target,generated||{},$('englishAstroName')?.value?.trim()||'User','en');
+        if(typeof window.__smvApplyEnglishToHoroscope!=='function') throw new Error('English horoscope translator is not ready. Please refresh the page.');
+        if(typeof window.__smvBindHoroscopeInteractions!=='function') throw new Error('English horoscope interactions are not ready. Please refresh the page.');
+        window.__smvApplyEnglishToHoroscope(target);
+        window.__smvBindHoroscopeInteractions(target,generated||{},$('englishAstroName')?.value?.trim()||'User','en');
         target.scrollIntoView({behavior:'smooth',block:'start'});
       }else throw new Error('Horoscope result was not returned.');
     }catch(e){alert(e?.message||String(e));}
