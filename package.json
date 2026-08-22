@@ -1,0 +1,19 @@
+{
+  "name": "smv-astro-email-automation",
+  "version": "1.26.0",
+  "private": true,
+  "description": "SMV ASTRO backend with Tamil Vedic horoscope using Astronomy Engine (MIT) and Lahiri-style sidereal conversion",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "check:engine": "node scripts/check-engine.js"
+  },
+  "engines": { "node": ">=18" },
+  "dependencies": {
+    "astronomy-engine": "^2.1.19",
+    "express": "^4.21.2",
+    "firebase-admin": "^13.4.0",
+    "razorpay": "^2.9.6",
+    "nodemailer": "^7.0.5"
+  }
+}
