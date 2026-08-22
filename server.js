@@ -1,4 +1,6 @@
 const express = require("express");
+let SwissVedic = null;
+try { SwissVedic = require('./swiss_vedic'); } catch (e) { console.error('Swiss Ephemeris module unavailable:', e.message); }
 const crypto = require("crypto");
 const Razorpay = require("razorpay");
 const admin = require("firebase-admin");
@@ -1428,44 +1430,15 @@ function dashaAtBirth(moonSiderealLon,date){
     current:{mahadasha:null,antardasha:null,pratyantardasha:null}
   };
 }
-function calculateVedicChart({date,time,lat,lon,height=0}){
-  if(!Astronomy) throw new Error("Astrology engine dependency is unavailable on the server.");
-  const dt=parseBirthDateTime(date,time);
-  if(!dt) throw new Error("பிறந்த தேதி / நேரம் சரியாக உள்ளிடவும். நேரம் HH:mm (உதா: 22:05) ஆக இருக்க வேண்டும்.");
-  // Astronomy Engine accepts native JavaScript Date values directly. Do not
-  // pre-convert with MakeTime here: passing the validated Date directly avoids
-  // wrapper/version differences and keeps the original UTC instant intact.
-  const astroTime = dt;
-  if (!(astroTime instanceof Date) || !Number.isFinite(astroTime.getTime())) {
-    throw new Error("Invalid birth time after timezone conversion.");
-  }
-  const latitude=clampNum(lat,-90,90), longitude=clampNum(lon,-180,180); if(latitude===null||longitude===null) throw new Error("பிறந்த இடத்தின் Latitude மற்றும் Longitude அவசியம்.");
-  const observer=new Astronomy.Observer(latitude,longitude,Number(height)||0), ayan=lahiriAyanamsa(dt);
-  const planets=[];
-  for(const [ta,en] of PLANETS){
-    let sid;
-    if(en==="NorthNode") sid=nodeLongitudes(dt).rahu;
-    else if(en==="SouthNode") sid=nodeLongitudes(dt).ketu;
-    else {
-      const tropical = bodyTropicalLongitude(en,astroTime,observer);
-      if (!Number.isFinite(tropical)) throw new Error(`Invalid astronomical longitude for ${en}.`);
-      sid=siderealLon(tropical,dt);
-    }
-    if (!Number.isFinite(sid)) throw new Error(`Invalid sidereal longitude for ${ta}.`);
-    const z=zodiac(sid), nk=nakshatraInfo(sid);
-    planets.push({name:ta,longitude:Number(sid.toFixed(6)),degree:degText(sid),rasi:z.sign,nakshatra:nk.name,pada:nk.pada,lord:nk.lord});
-  }
-  const moon=planets.find(p=>p.name==="சந்திரன்"), ascLon=ascendantLongitude(dt,latitude,longitude);
-  const ascTropical=zodiac(ascLon), ascSidLon=siderealLon(ascLon,dt), asc=zodiac(ascSidLon), ascNak=nakshatraInfo(ascSidLon);
-  const cusps=bhavaCuspsEqual(ascSidLon);
-  const bhavas=cusps.map((c,i)=>({house:i+1,longitude:Number(c.toFixed(6)),degree:degText(c),rasi:zodiac(c).sign,nakshatra:nakshatraInfo(c).name}));
-  const enrichedPlanets=planets.map(p=>({...p,navamsa:navamsaData(p.longitude),bhava:houseFromCusp(p.longitude,ascSidLon)}));
-  const navamsaLagna=navamsaData(ascSidLon);
-  const d9Planets=[{name:"லக்னம்",longitude:Number(ascSidLon.toFixed(6)),degree:degText(ascSidLon),rasi:asc.sign,navamsa:navamsaLagna,bhava:1},...enrichedPlanets];
-  const lst=meanSiderealTime(dt,longitude);
-  const dashas=dashaAtBirth(moon.longitude,dt);
-  return {ok:true,engine:"Astronomy Engine + Lahiri-style sidereal conversion",houseSystem:"Equal House (30°) — Bhava Sphuta",timezone:"Asia/Kolkata",ayanamsa:Number(ayan.toFixed(6)),birth:{date,time,latitude,longitude,utc:dt.toISOString()},astronomy:{localSiderealTimeDegrees:Number(lst.toFixed(8)),latitude:Number(latitude.toFixed(8)),longitude:Number(longitude.toFixed(8))},lagna:{longitude:Number(ascSidLon.toFixed(6)),tropicalLongitude:Number(ascLon.toFixed(6)),degree:degText(ascSidLon),rasi:asc.sign,nakshatra:ascNak.name,pada:ascNak.pada},moonRasi:moon.rasi,moonNakshatra:moon.nakshatra,moonPada:moon.pada,planets:enrichedPlanets,dashas,bhavas,navamsa:{lagna:navamsaLagna,planets:d9Planets},calculatedAt:new Date().toISOString()};
+function calculateVedicChart(input){
+  if(!SwissVedic) throw new Error("Swiss Ephemeris module is unavailable. Run npm install and verify the sweph dependency.");
+  const chart=SwissVedic.calculateSwiss(input);
+  // Vimshottari remains driven by the Swiss-Ephemeris sidereal Moon longitude.
+  const moon=chart.planets.find(p=>p.name==='சந்திரன்');
+  chart.dashas=dashaAtBirth(moon.longitude,new Date(chart.birth.utc_jd ? (chart.birth.utc_jd-2440587.5)*86400000 : Date.parse(chart.birth.date+'T'+chart.birth.time+':00+05:30')));
+  return chart;
 }
+
 app.post("/api/horoscope/calculate", async (req,res)=>{
   try {
     const body=req.body||{};
@@ -1489,7 +1462,7 @@ app.post("/api/horoscope/calculate-legacy", async (req,res)=>{
 app.post("/api/horoscope/validate", async (req,res)=>{
   try {
     const chart=calculateVedicChart(req.body||{});
-    return res.json({ok:true,chart,validation:{referenceEngine:"Astronomy Engine",license:"MIT",note:"This is a free/open-source astronomy calculation layer with a Lahiri-style sidereal conversion. It is not Swiss Ephemeris output and has not been certified as an exact Swiss Ephemeris match."}});
+    return res.json({ok:true,chart,validation:{referenceEngine:"Swiss Ephemeris",license:"See Swiss Ephemeris / sweph licensing terms",note:"Validation endpoint uses Swiss Ephemeris sidereal positions and house cusps. Ensure your ephemeris data and licensing are configured for your deployment."}});
   } catch(e){ return res.status(400).json({error:e?.message||"Validation failed.",engineAvailable:!!Astronomy}); }
 });
 

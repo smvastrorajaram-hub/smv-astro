@@ -10,3 +10,7 @@ services:
         value: "20"
       - key: NODE_ENV
         value: production
+      - key: SWISSEPH_EPHE_PATH
+        value: ./ephe
+      - key: HOUSE_SYSTEM
+        value: P

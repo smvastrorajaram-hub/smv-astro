@@ -3873,7 +3873,7 @@ window.__SMV_APP_READY=true;
         <div class="stat"><span class="small">🔱 லக்னம்</span><p><b>${esc(d.lagna.rasi)}</b> · ${esc(d.lagna.degree)}</p><p class="small">${esc(d.lagna.nakshatra)} · பாதம் ${d.lagna.pada}<br>நெடுவரை: ${Number(d.lagna.longitude).toFixed(4)}°</p></div>
         <div class="stat"><span class="small">🌙 சந்திர ராசி</span><p><b>${esc(d.moonRasi)}</b> · ${esc(d.moonNakshatra)}<br>பாதம் ${d.moonPada}</p></div>
         <div class="stat"><span class="small">🧭 அயனாம்சம்</span><p>${d.ayanamsa.toFixed(3)}°<br><span class="small">Lahiri-style sidereal</span></p></div>
-        <div class="stat"><span class="small">⚙️ Calculation</span><p>Astronomy Engine<br><span class="small">sidereal/Vedic mapping</span></p></div>
+        <div class="stat"><span class="small">⚙️ Calculation</span><p><b>Swiss Ephemeris</b><br><span class="small">Lahiri sidereal · real house cusps</span></p></div>
       </div>
       <h3 style="margin-top:22px">🗺️ ராசி கட்டம்</h3>
       <div id="rasiChart" class="south-indian-chart" aria-label="ராசி கட்டம்"></div>
@@ -3881,7 +3881,7 @@ window.__SMV_APP_READY=true;
       <p class="small">ஒவ்வொரு கிரகத்தின் D9 நவாம்ச ராசி, லக்ன நவாம்சம் உட்பட.</p>
       <div id="navamsaChart" class="south-indian-chart" aria-label="நவாம்ச கட்டம்"></div>
       <h3 style="margin-top:22px">🏠 பாவ கட்டம்</h3>
-      <p class="small">இங்கு 1-ம் பாவம் லக்னத்திலிருந்து தொடங்கும் <b>சம பாவ முறை (Equal House)</b> பயன்படுத்தப்படுகிறது.</p>
+      <p class="small">இங்கு பாவ ஸ்புடம் மற்றும் பாவக் கணக்கீடு <b>Swiss Ephemeris</b> house cusps அடிப்படையில் கணக்கிடப்படுகிறது. House system: <b>Placidus</b>.</p>
       <div id="bhavaChart" class="south-indian-chart" aria-label="பாவ கட்டம்"></div>
       <h3 style="margin-top:22px">📐 பாவ ஸ்புடம்</h3>
       <div class="data-table-wrap"><table class="data-table bhava-table"><thead><tr><th>பாவம்</th><th>ஸ்புடம்</th><th>ராசி</th><th>கிரகங்கள்</th></tr></thead><tbody>${(d.bhavas||[]).map(b=>{const ps=(d.planets||[]).filter(p=>p.bhava===b.house).map(p=>p.name).join(', ');return `<tr><td><b>${b.house}</b></td><td>${esc(b.degree)}</td><td>${esc(b.rasi)}</td><td>${esc(ps||'—')}</td></tr>`}).join('')}</tbody></table></div>
@@ -3940,12 +3940,15 @@ window.__SMV_APP_READY=true;
       // inside signs, so render the 12 houses in numerical order with cusp data.
       const bhavas=d.bhavas||[]; const byHouse=Array.from({length:12},()=>[]);
       (d.planets||[]).forEach(p=>{const h=Number(p.bhava); if(h>=1&&h<=12) byHouse[h-1].push(p);});
+      // South-Indian-style 4x4 ring: 12 houses around a 2x2 center.
+      const bhOrder=[0,1,2,3,11,null,null,4,10,null,null,5,9,8,7,6];
       let h='';
-      for(let i=0;i<12;i++){
-        const b=bhavas[i]||{};
-        const ps=byHouse[i].map(p=>`<div class="planet-line"><span class="planet-glyph">${esc(p.name)}</span><span class="planet-degree">${esc(p.degree||'')}</span></div>`).join('');
-        h+=`<div class="south-rasi-cell"><div class="sign">${esc(b.rasi||'—')}</div><div class="house">${i+1}-ம் பாவம்</div>${i===0?'<div class="lagna">🔱 லக்ன பாவம்</div>':''}<div class="small">ஸ்புடம்: ${esc(b.degree||'—')}</div>${ps||'<div class="small">கிரகம் இல்லை</div>'}</div>`;
-      }
+      bhOrder.forEach((idx,pos)=>{
+        if(idx===null){ if(pos===5) h+=`<div class="south-chart-center">பாவ<br>ஸ்புடம்</div>`; return; }
+        const b=bhavas[idx]||{};
+        const ps=byHouse[idx].map(p=>`<div class="planet-line"><span class="planet-glyph">${esc(p.name)}</span><span class="planet-degree">${esc(p.degree||'')}</span></div>`).join('');
+        h+=`<div class="south-rasi-cell"><div class="sign">${esc(b.rasi||'—')}</div><div class="house">${idx+1}-ம் பாவம்</div>${idx===0?'<div class="lagna">🔱 லக்ன பாவம்</div>':''}<div class="small">ஸ்புடம்: ${esc(b.degree||'—')}</div>${ps||'<div class="small">கிரகம் இல்லை</div>'}</div>`;
+      });
       bhChart.innerHTML=h;
     }
     const dashaTree=$('dashaTree');
