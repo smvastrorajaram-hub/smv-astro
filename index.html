@@ -3911,7 +3911,12 @@ window.__SMV_APP_READY=true;
       <p class="small">மகாதசையை touch செய்தால் <b>புக்தி / அந்தர்தசை</b> திறக்கும். புக்தியை touch செய்தால் <b>அந்தரம் / பிரத்யந்தர்தசை</b> திறக்கும்.</p>
       <p class="small">பிறந்த நேர சந்திரனின் நட்சத்திரத்தை அடிப்படையாகக் கொண்ட ஆரம்ப மகாதசா balance: <b>${d.dashas.balanceYears} ஆண்டுகள்</b>.</p>
       <div id="dashaTree" class="dasha-tree"></div>
-      <div class="card" style="margin-top:16px;background:#fff8e9"><b>✨ ராசிபலன் அடிப்படை</b><p style="margin-bottom:0">உங்கள் சந்திர ராசி <b>${esc(current?.rasi||d.moonRasi)}</b>. மேலே உள்ள கணக்கீட்டு தரவை வைத்து அடுத்த கட்டத்தில் தமிழ் AI விளக்கத்தை உருவாக்கலாம்.</p></div>
+      <div class="card" style="margin-top:16px;background:#fff8e9;border:1px solid rgba(140,91,28,.18)">
+        <b>✨ AI எதிர்கால பலன்</b>
+        <p style="margin:8px 0 12px">உங்கள் சரிபார்க்கப்பட்ட ஜாதகக் கணக்கீட்டு தரவை மட்டும் அடிப்படையாகக் கொண்டு தமிழ் AI விளக்கத்தை உருவாக்கலாம். AI கணக்கீட்டு தரவை மாற்றாது; எதிர்காலத்தை உறுதி செய்யாது.</p>
+        <button class="btn" type="button" id="generateAIFuture">🔮 AI எதிர்கால பலன் உருவாக்குக</button>
+        <div id="aiFutureResult" class="card hidden" style="margin-top:14px;background:#fff"></div>
+      </div>
       <p class="small" style="margin-top:15px"><b>குறிப்பு:</b> இது astronomical ephemeris அடிப்படையிலான கணக்கீட்டு layer. பாரம்பரிய ஜோதிட பலன்கள் விளக்க/நம்பிக்கை சார்ந்தவை; முக்கிய வாழ்க்கை முடிவுகளுக்கு இதை ஒரே ஆதாரமாக பயன்படுத்த வேண்டாம்.</p>
       <div class="action-row"><button class="btn" type="button" id="printTamilHoroscope">🖨️ அச்சிட / PDF ஆக சேமிக்க</button><button class="btn gray" type="button" id="copyTamilHoroscope">📋 உரையை நகலெடுக்க</button></div>
     </div>`;
@@ -3991,8 +3996,31 @@ window.__SMV_APP_READY=true;
     result.classList.remove('hidden');
     $('printTamilHoroscope')?.addEventListener('click',()=>window.print());
     $('copyTamilHoroscope')?.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(result.innerText);alert('ஜாதக கணக்கீட்டு உரை நகலெடுக்கப்பட்டது.');}catch(e){alert('நகலெடுக்க முடியவில்லை.');}});
+    $('generateAIFuture')?.addEventListener('click',()=>generateAIFuture(d,name));
     result.scrollIntoView({behavior:'smooth',block:'start'});
   }
+  async function generateAIFuture(d,name){
+    const btn=$('generateAIFuture'), box=$('aiFutureResult');
+    if(!btn||!box)return;
+    btn.disabled=true; btn.textContent='⏳ AI பலன் உருவாக்கப்படுகிறது...';
+    box.classList.remove('hidden'); box.innerHTML='<p class="small">சரிபார்க்கப்பட்ட ஜாதகத் தரவை AI விளக்குகிறது...</p>';
+    const chart={
+      moonRasi:d.moonRasi, moonNakshatra:d.moonNakshatra, moonPada:d.moonPada,
+      lagna:d.lagna, ayanamsa:d.ayanamsa, ayanamsaName:d.ayanamsaName,
+      planets:(d.planets||[]).map(p=>({name:p.name,rasi:p.rasi,degree:p.degree,nakshatra:p.nakshatra,pada:p.pada,bhava:p.bhava,navamsa:p.navamsa?.rasi||null})),
+      bhavas:(d.bhavas||[]).map(b=>({house:b.house,arambha:b.arambha,madhya:b.madhya,antya:b.antya,rasi:b.rasi})),
+      dashas:(d.dashas?.mahadashas||d.dashas?.periods||[]).slice(0,12).map(x=>({name:x.name,start:x.start,end:x.end}))
+    };
+    try{
+      const r=await fetch(BACKEND_URL+'/api/horoscope/ai-future',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chart})});
+      const body=await r.json().catch(()=>({}));
+      if(!r.ok)throw new Error(body.error||`AI generation failed (HTTP ${r.status})`);
+      const text=String(body.text||'').trim();
+      box.innerHTML=`<div class="home-rule"><span>✦</span><span>AI எதிர்கால பலன்</span><span>✦</span></div><p class="small">${esc(name)} · ${esc(body.model||'Gemini')}</p><div style="white-space:pre-wrap;line-height:1.75">${esc(text)}</div><p class="small" style="margin-top:14px"><b>குறிப்பு:</b> இது சரிபார்க்கப்பட்ட ஜாதகத் தரவை அடிப்படையாகக் கொண்ட பாரம்பரிய ஜோதிட விளக்கம் மட்டுமே; எதிர்கால நிகழ்வுகளுக்கான உத்தரவாதம் அல்ல.</p>`;
+    }catch(e){box.innerHTML=`<div class="error"><b>AI பலன் உருவாக்க முடியவில்லை.</b><p class="small">${esc(e?.message||String(e))}</p></div>`;}
+    finally{btn.disabled=false;btn.textContent='🔮 AI எதிர்கால பலன் உருவாக்குக';}
+  }
+
   async function generate(){
     const date=$('tamilDob')?.value||'', time=$('tamilTob')?.value||'';
     const lat=$('tamilLat')?.value||'', lon=$('tamilLon')?.value||'';

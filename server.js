@@ -34,6 +34,11 @@ const ADMIN_EMAIL = String(process.env.ADMIN_EMAIL || "").trim();
 const RESEND_API_KEY = String(process.env.RESEND_API_KEY || "").trim();
 const RESEND_FROM = String(process.env.RESEND_FROM || "onboarding@resend.dev").trim();
 const RESEND_TEST_RECIPIENT = String(process.env.RESEND_TEST_RECIPIENT || ADMIN_EMAIL || "").trim();
+const GEMINI_API_KEY = String(process.env.GEMINI_API_KEY || "").trim();
+const GEMINI_MODEL = String(process.env.GEMINI_MODEL || "gemini-3.7-flash").trim();
+const AI_RATE_LIMIT_MAX = Number(process.env.AI_RATE_LIMIT_MAX || 10);
+const AI_RATE_LIMIT_WINDOW_MS = Number(process.env.AI_RATE_LIMIT_WINDOW_MS || 10 * 60 * 1000);
+const aiRateBuckets = new Map();
 // SMTP is retained as an optional fallback for paid Render services. Render Free
 // services block outbound SMTP ports 25/465/587, so Resend HTTP API is preferred.
 const SMTP_HOST = String(process.env.SMTP_HOST || "").trim();
@@ -1451,6 +1456,76 @@ app.post("/api/horoscope/calculate", async (req,res)=>{
       engineAvailable:!!Astronomy,
       received:{date:req.body?.date||null,time:req.body?.time||null,lat:req.body?.lat??null,lon:req.body?.lon??null}
     });
+  }
+});
+
+app.post("/api/horoscope/ai-future", express.json({ limit: "60kb" }), async (req, res) => {
+  try {
+    if (!GEMINI_API_KEY) {
+      return res.status(503).json({ error: "AI future generation is not configured. Add GEMINI_API_KEY in Render Environment Variables." });
+    }
+    const ip = String(req.headers["x-forwarded-for"] || req.socket.remoteAddress || "unknown").split(",")[0].trim();
+    const now = Date.now();
+    const bucket = aiRateBuckets.get(ip) || { start: now, count: 0 };
+    if (now - bucket.start >= AI_RATE_LIMIT_WINDOW_MS) { bucket.start = now; bucket.count = 0; }
+    bucket.count += 1;
+    aiRateBuckets.set(ip, bucket);
+    if (bucket.count > AI_RATE_LIMIT_MAX) {
+      return res.status(429).json({ error: "AI பலன் உருவாக்கும் வரம்பு தற்காலிகமாக நிறைவடைந்துள்ளது. சில நிமிடங்கள் கழித்து மீண்டும் முயற்சிக்கவும்." });
+    }
+
+    const chart = req.body?.chart;
+    if (!chart || typeof chart !== "object") return res.status(400).json({ error: "Chart data is required." });
+
+    // IMPORTANT: Gemini is an interpretation layer only. It must not recalculate
+    // astronomy or replace Swiss Ephemeris / Bhava Sphuta values.
+    const prompt = `
+You are the Tamil-language interpretation assistant for SMV ASTRO.
+Generate a traditional Vedic astrology interpretation using ONLY the verified chart data supplied below.
+Do NOT recalculate planetary positions, ascendant, houses, bhava sphuta, or dasha dates. Do not invent missing data.
+Clearly distinguish traditional astrological interpretation from factual certainty. Never promise or guarantee future events.
+Write in clear, respectful Tamil. Avoid medical, legal, financial or other high-stakes instructions; where such topics arise, advise the user to consult a qualified professional.
+
+Return these sections with concise headings:
+1. பொதுவான வாழ்க்கை நோக்கு
+2. தொழில் / கல்வி
+3. பணநிலை
+4. திருமணம் / உறவுகள்
+5. குடும்பம்
+6. முக்கிய வாய்ப்புகள்
+7. கவனிக்க வேண்டிய காலங்கள்
+8. பாரம்பரிய பரிகார வழிகாட்டல் (optional, non-coercive)
+9. முக்கிய குறிப்பு — இது பாரம்பரிய ஜோதிட விளக்கம்; உறுதியான எதிர்கால உத்தரவாதம் அல்ல.
+
+Verified chart data:
+${JSON.stringify(chart, null, 2)}
+`;
+
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 30000);
+    try {
+      const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(GEMINI_MODEL)}:generateContent`, {
+        method: "POST",
+        headers: { "x-goog-api-key": GEMINI_API_KEY, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          system_instruction: { parts: [{ text: "You are a careful Tamil Vedic astrology interpretation assistant. Use only supplied verified chart data and never claim certainty." }] },
+          contents: [{ role: "user", parts: [{ text: prompt }] }],
+          generationConfig: { maxOutputTokens: 3500 }
+        }),
+        signal: controller.signal
+      });
+      const body = await r.json().catch(() => ({}));
+      if (!r.ok) {
+        const detail = body?.error?.message || `Gemini API HTTP ${r.status}`;
+        return res.status(502).json({ error: `AI service error: ${detail}` });
+      }
+      const text = body?.candidates?.[0]?.content?.parts?.map(p => p.text || "").join("\n").trim();
+      if (!text) return res.status(502).json({ error: "AI service returned an empty interpretation." });
+      return res.json({ ok: true, model: GEMINI_MODEL, text });
+    } finally { clearTimeout(timer); }
+  } catch (e) {
+    console.error("AI future generation error:", e);
+    return res.status(500).json({ error: e?.name === "AbortError" ? "AI service timed out. Please try again." : (e?.message || "AI generation failed.") });
   }
 });
 
