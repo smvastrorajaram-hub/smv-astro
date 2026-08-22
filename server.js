@@ -1293,8 +1293,11 @@ function parseBirthDateTime(date,time){
   const check=new Date(Date.UTC(y,mo-1,d));
   if(check.getUTCFullYear()!==y || check.getUTCMonth()!==mo-1 || check.getUTCDate()!==d) return null;
   // Project currently targets India; the frontend timezone is Asia/Kolkata.
-  const dt=new Date(Date.UTC(y,mo-1,d,hh,mm)-330*60*1000);
-  return Number.isNaN(dt.getTime())?null:dt;
+  // Build the UTC instant explicitly. Never rely on parsing a locale/time string.
+  const utcMillis = Date.UTC(y, mo - 1, d, hh, mm, 0, 0) - (330 * 60 * 1000);
+  const dt = new Date(utcMillis);
+  if (!Number.isFinite(dt.getTime())) return null;
+  return dt;
 }
 function lahiriAyanamsa(date){
   const y=date.getUTCFullYear()+((date.getUTCMonth()+0.5)/12);
@@ -1347,7 +1350,11 @@ function dashaAtBirth(moonSiderealLon,date){
 }
 function calculateVedicChart({date,time,lat,lon,height=0}){
   if(!Astronomy) throw new Error("Astrology engine dependency is unavailable on the server.");
-  const dt=parseBirthDateTime(date,time); if(!dt) throw new Error("பிறந்த தேதி / நேரம் சரியாக உள்ளிடவும்.");
+  const dt=parseBirthDateTime(date,time);
+  if(!dt) throw new Error("பிறந்த தேதி / நேரம் சரியாக உள்ளிடவும். நேரம் HH:mm (உதா: 22:05) ஆக இருக்க வேண்டும்.");
+  // Astronomy Engine accepts JavaScript Date objects, but explicitly converting
+  // through MakeTime gives a stable AstroTime object for every calculation.
+  const astroTime = Astronomy.MakeTime ? Astronomy.MakeTime(dt) : dt;
   const latitude=clampNum(lat,-90,90), longitude=clampNum(lon,-180,180); if(latitude===null||longitude===null) throw new Error("பிறந்த இடத்தின் Latitude மற்றும் Longitude அவசியம்.");
   const observer=new Astronomy.Observer(latitude,longitude,Number(height)||0), ayan=lahiriAyanamsa(dt);
   const planets=[];
@@ -1355,7 +1362,7 @@ function calculateVedicChart({date,time,lat,lon,height=0}){
     let sid;
     if(en==="NorthNode") sid=nodeLongitudes(dt).rahu;
     else if(en==="SouthNode") sid=nodeLongitudes(dt).ketu;
-    else sid=siderealLon(bodyTropicalLongitude(en,dt,observer),dt);
+    else sid=siderealLon(bodyTropicalLongitude(en,astroTime,observer),dt);
     const z=zodiac(sid), nk=nakshatraInfo(sid);
     planets.push({name:ta,longitude:Number(sid.toFixed(6)),degree:degText(sid),rasi:z.sign,nakshatra:nk.name,pada:nk.pada,lord:nk.lord});
   }
