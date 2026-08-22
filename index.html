@@ -1628,7 +1628,11 @@ async function openQuestionService(){
 window.__smvOpenQuestionService=openQuestionService;
   window.__smvOpenRegister=openRegister;
 
-if($("authBtn") && $("authBtn").dataset.smvAuthBound!=="1"){ $("authBtn").dataset.smvAuthBound="1"; $("authBtn").addEventListener("click",async()=>{try{if(currentUser){await logoutToHome();}else{openAuth("login");}}catch(e){console.error("SMV login action failed",e);}}); }
+function hidePublicHoroscopeSections(){
+  ['horoscope-tools','tamil-horoscope','english-horoscope'].forEach(id=>hide(id));
+  ['tamilHoroscopeResult','englishHoroscopeResult'].forEach(id=>{const el=$(id);if(el){el.classList.add('hidden');el.innerHTML='';}});
+}
+if($("authBtn") && $("authBtn").dataset.smvAuthBound!=="1"){ $("authBtn").dataset.smvAuthBound="1"; $("authBtn").addEventListener("click",async()=>{try{hidePublicHoroscopeSections();if(currentUser){await logoutToHome();}else{openAuth("login");}}catch(e){console.error("SMV login action failed",e);}}); }
 $("registerNav")?.addEventListener("click",()=>openRegister());
   $("customerRegBtn")?.addEventListener("click",()=>openAuth("register"));
 $("privateConsultBtn")?.addEventListener("click",()=>openQuestionService());
@@ -1674,6 +1678,7 @@ async function openAdminEntry(){
 
 
 function openAuth(mode="login"){
+  if(mode==='login')hidePublicHoroscopeSections?.();
   hide("dashboard"); hide("admin"); hide("dashLink"); hide("adminLink"); hide("appointment"); hide("contact"); hide("ask-flow"); hide("register-flow"); hide("astro-register-form"); hide("astro-flow");
   closeModal(); loginMethod="email"; const isLogin=mode==="login";
   openModal(`<div class="auth-shell">
@@ -4108,7 +4113,7 @@ window.__SMV_APP_READY=true;
       };
       const periods=d.dashas.periods||[];
       dashaTree.innerHTML=periods.map(p=>periodHtml(p,1,'மகாதசை')).join('');
-      dashaTree.querySelectorAll('.dasha-head').forEach(btn=>btn.addEventListener('click',(ev)=>{ev.preventDefault();ev.stopPropagation();const node=btn.parentElement;const open=!node.classList.contains('open');node.classList.toggle('open',open);btn.setAttribute('aria-expanded',String(open));}));
+      // Dasha interaction handlers are bound by bindHoroscopeInteractions(), including copied English results.
       // V147: show the current/next Bhukti and Antara immediately, while retaining full tap-to-expand details.
       const now=new Date();
       const contains=(x)=>{const a=new Date(String(x.start)+'T00:00:00');const b=new Date(String(x.end)+'T23:59:59');return a<=now&&now<=b;};
@@ -4135,13 +4140,49 @@ window.__SMV_APP_READY=true;
     if(getHoroscopeLang()==='en') applyEnglishToHoroscope(result);
     $('printTamilHoroscope')?.addEventListener('click',()=>window.print());
     $('copyTamilHoroscope')?.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(result.innerText);alert('ஜாதக கணக்கீட்டு உரை நகலெடுக்கப்பட்டது.');}catch(e){alert('நகலெடுக்க முடியவில்லை.');}});
-    $('generateAIFuture')?.addEventListener('click',(ev)=>{ev.preventDefault();ev.stopPropagation();generateAIFuture(d,name);});
+    bindHoroscopeInteractions(result,d,name,getHoroscopeLang());
     result.scrollIntoView({behavior:'smooth',block:'start'});
   }
-  async function generateAIFuture(d,name){
-    const btn=$('generateAIFuture'), box=$('aiFutureResult');
+  function bindHoroscopeInteractions(root,d,name,lang){
+    if(!root)return;
+    // Bind all dasha levels after HTML is rendered or copied into the English section.
+    root.querySelectorAll('.dasha-head').forEach(btn=>{
+      if(btn.dataset.smvBound==='1')return;
+      btn.dataset.smvBound='1';
+      btn.addEventListener('click',(ev)=>{
+        ev.preventDefault(); ev.stopPropagation();
+        const node=btn.parentElement;
+        const open=!node.classList.contains('open');
+        node.classList.toggle('open',open);
+        btn.setAttribute('aria-expanded',String(open));
+      });
+    });
+    const mdNode=root.querySelector('.dasha-node[data-level="1"]');
+    if(mdNode){
+      mdNode.classList.add('open');
+      mdNode.querySelector(':scope > .dasha-head')?.setAttribute('aria-expanded','true');
+      const bhuktiNode=mdNode.querySelector(':scope > .dasha-body .dasha-node[data-level="2"]');
+      if(bhuktiNode){
+        bhuktiNode.classList.add('open');
+        bhuktiNode.querySelector(':scope > .dasha-head')?.setAttribute('aria-expanded','true');
+      }
+    }
+    const aiBtn=root.querySelector('#generateAIFuture');
+    if(aiBtn && aiBtn.dataset.smvBound!=='1'){
+      aiBtn.dataset.smvBound='1';
+      aiBtn.type='button';
+      aiBtn.addEventListener('click',(ev)=>{
+        ev.preventDefault(); ev.stopPropagation();
+        generateAIFuture(d,name,lang,root);
+      });
+    }
+  }
+
+  async function generateAIFuture(d,name,langOverride,root){
+    const scope=root||document;
+    const btn=scope.querySelector('#generateAIFuture'), box=scope.querySelector('#aiFutureResult');
     if(!btn||!box)return;
-    const lang=getHoroscopeLang();
+    const lang=langOverride==='ta'||langOverride==='en'?langOverride:getHoroscopeLang();
     btn.disabled=true; btn.textContent=lang==='en'?'⏳ Generating AI Future Insights...':'⏳ AI பலன் உருவாக்கப்படுகிறது...';
     box.classList.remove('hidden'); box.innerHTML=`<p class="small">${lang==='en'?'AI is interpreting the verified horoscope data...':'சரிபார்க்கப்பட்ட ஜாதகத் தரவை AI விளக்குகிறது...'}</p>`;
     const chart={
@@ -4184,7 +4225,7 @@ window.__SMV_APP_READY=true;
       const normalizedTime=normalizeHoroscopeTime(time);
       if(!normalizedTime) throw new Error('பிறந்த நேரம் சரியாக உள்ளிடவும். உதாரணம்: 22:05 (10:05 PM).');
       const r=await fetch((window.SMV_BACKEND_URL||'https://smv-astro-1fco.onrender.com')+'/api/horoscope/calculate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({date,time:normalizedTime,lat:Number(lat),lon:Number(lon),height:0,timezone:'Asia/Kolkata',utcOffsetMinutes:330,houseSystem:'S'})});
-      const d=await r.json().catch(()=>({})); if(!r.ok) throw new Error(d.error||`Calculation failed (HTTP ${r.status})`); render(d);
+      const d=await r.json().catch(()=>({})); if(!r.ok) throw new Error(d.error||`Calculation failed (HTTP ${r.status})`); render(d); return d;
     }catch(e){alert(e?.message||String(e));}
     finally{if(btn){btn.disabled=false;btn.textContent='🔮 தமிழில் ஜாதகம் உருவாக்குக';}}
   }
@@ -4921,14 +4962,14 @@ document.addEventListener("click",function(e){
     const btn=$('generateEnglishHoroscope');if(btn){btn.disabled=true;btn.textContent='⏳ Calculating Horoscope...';}
     try{
       if(typeof window.__smvGenerateHoroscopeEngine!=='function')throw new Error('Horoscope engine is not ready. Please refresh the page.');
-      await window.__smvGenerateHoroscopeEngine();
+      const generated=await window.__smvGenerateHoroscopeEngine();
       const source=$('tamilHoroscopeResult'),target=$('englishHoroscopeResult');
       if(source&&target&&source.innerHTML.trim()){
         target.innerHTML=source.innerHTML;target.classList.remove('hidden');source.classList.add('hidden');source.innerHTML='';
-        // Keep the public English section self-contained.
+        // The English result is a new DOM tree, so event listeners must be rebound after copying.
         applyEnglishToHoroscope(target);
-         target.querySelector('#generateAIFuture')?.addEventListener('click',ev=>{ev.preventDefault();ev.stopPropagation();},{once:false});
-         target.scrollIntoView({behavior:'smooth',block:'start'});
+        bindHoroscopeInteractions(target,generated||{},$('englishAstroName')?.value?.trim()||'User','en');
+        target.scrollIntoView({behavior:'smooth',block:'start'});
       }else throw new Error('Horoscope result was not returned.');
     }catch(e){alert(e?.message||String(e));}
     finally{if(btn){btn.disabled=false;btn.textContent='🔮 Create Horoscope in English';}}
