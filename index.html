@@ -4024,7 +4024,11 @@ window.__SMV_APP_READY=true;
   async function generate(){
     const date=$('tamilDob')?.value||'', time=$('tamilTob')?.value||'';
     const lat=$('tamilLat')?.value||'', lon=$('tamilLon')?.value||'';
-    if(!date||!time||lat===''||lon===''){alert('பிறந்த தேதி, நேரம், Latitude, Longitude ஆகியவற்றை உள்ளிடவும்.');return;}
+    if(!date||!time){alert('பிறந்த தேதி மற்றும் பிறந்த நேரத்தை உள்ளிடவும்.');return;}
+    const placeValue=String($('tamilBirthPlace')?.value||'').trim();
+    const selected=String($('tamilBirthPlace')?.dataset.locationSelected||'0')==='1';
+    if(placeValue && !selected && (lat==='' || lon==='')){alert('முதலில் Birth Place-ல் காட்டப்படும் location suggestion-ஐ தேர்வு செய்யவும். Latitude மற்றும் Longitude தானாக நிரப்பப்படும்.');return;}
+    if(lat===''||lon===''){alert('Birth Place-ஐ தேர்வு செய்யவும்; Latitude மற்றும் Longitude தானாக நிரப்பப்படும்.');return;}
     const btn=$('generateTamilHoroscope'); if(btn){btn.disabled=true;btn.textContent='⏳ ஜாதகம் கணக்கிடப்படுகிறது...';}
     try{
       // Native mobile time inputs normally return HH:mm (for example 22:05 for 10:05 PM).
@@ -4045,7 +4049,7 @@ window.__SMV_APP_READY=true;
     finally{if(btn){btn.disabled=false;btn.textContent='🔮 தமிழில் ஜாதகம் உருவாக்குக';}}
   }
   $('generateTamilHoroscope')?.addEventListener('click',generate);
-  $('clearTamilHoroscope')?.addEventListener('click',()=>{['tamilAstroName','tamilDob','tamilTob','tamilBirthPlace','tamilNakshatra','tamilLat','tamilLon'].forEach(id=>{if($(id))$(id).value='';});if($('tamilRasi'))$('tamilRasi').value='மேஷம்';if($('tamilHoroscopeResult')){$('tamilHoroscopeResult').classList.add('hidden');$('tamilHoroscopeResult').innerHTML='';}});
+  $('clearTamilHoroscope')?.addEventListener('click',()=>{['tamilAstroName','tamilDob','tamilTob','tamilBirthPlace','tamilNakshatra','tamilLat','tamilLon'].forEach(id=>{if($(id))$(id).value='';});if($('tamilBirthPlace')){$('tamilBirthPlace').dataset.locationSelected='0';$('tamilBirthPlace').dataset.latitude='';$('tamilBirthPlace').dataset.longitude='';}if($('tamilRasi'))$('tamilRasi').value='மேஷம்';if($('tamilHoroscopeResult')){$('tamilHoroscopeResult').classList.add('hidden');$('tamilHoroscopeResult').innerHTML='';}});
 })();
 </script>
 <!-- Legacy fallback authentication block removed in V109. Main Firebase auth is the single login system. -->
@@ -4633,5 +4637,89 @@ document.addEventListener("click",function(e){
 
 
 
+
+<style id="smv-v142-location-autocomplete-css">
+.smv-location-wrap{position:relative}
+.smv-location-suggestions{position:absolute;left:0;right:0;top:100%;z-index:1000;background:#fff;border:1px solid #d8c9a8;border-radius:10px;box-shadow:0 10px 28px rgba(44,31,20,.16);overflow:hidden;display:none}
+.smv-location-suggestions.show{display:block}
+.smv-location-suggestion{display:block;width:100%;border:0;background:#fff;text-align:left;padding:11px 13px;cursor:pointer;font:inherit;color:#2b2448}
+.smv-location-suggestion:hover,.smv-location-suggestion:focus{background:#f8f1df;outline:none}
+.smv-location-status{font-size:.82rem;margin-top:5px;min-height:1.1em;color:#6b6258}
+.smv-location-status.ok{color:#2d6a3f}.smv-location-status.err{color:#a43d3d}
+</style>
+
+<script id="smv-v142-location-autocomplete">
+
+(function(){
+  const place = document.getElementById('tamilBirthPlace');
+  const lat = document.getElementById('tamilLat');
+  const lon = document.getElementById('tamilLon');
+  if(!place || !lat || !lon) return;
+  const parent = place.parentElement;
+  parent.classList.add('smv-location-wrap');
+  const list = document.createElement('div');
+  list.className='smv-location-suggestions';
+  list.setAttribute('role','listbox');
+  parent.appendChild(list);
+  const status=document.createElement('div');
+  status.className='smv-location-status';
+  parent.appendChild(status);
+  let timer=null, controller=null, lastQuery='';
+  function clearList(){list.innerHTML='';list.classList.remove('show');}
+  function setStatus(text, cls){status.textContent=text||'';status.className='smv-location-status'+(cls?' '+cls:'');}
+  function choose(item){
+    place.value=item.place||'';
+    lat.value=Number(item.latitude).toFixed(6);
+    lon.value=Number(item.longitude).toFixed(6);
+    place.dataset.locationSelected='1';
+    place.dataset.latitude=String(item.latitude);
+    place.dataset.longitude=String(item.longitude);
+    clearList();
+    setStatus('Location selected — latitude and longitude filled automatically.','ok');
+  }
+  function render(items){
+    clearList();
+    if(!items.length){setStatus('No matching location found. Please type a little more.','err');return;}
+    items.forEach(item=>{
+      const b=document.createElement('button');
+      b.type='button';b.className='smv-location-suggestion';b.setAttribute('role','option');
+      b.textContent=item.place;
+      b.addEventListener('click',()=>choose(item));
+      list.appendChild(b);
+    });
+    list.classList.add('show');
+    setStatus('Select your exact place from the list.','');
+  }
+  async function search(q){
+    if(q.length<2){clearList();setStatus('','');return;}
+    if(q===lastQuery)return;
+    lastQuery=q;
+    if(controller) controller.abort();
+    controller=new AbortController();
+    setStatus('Searching location…','');
+    try{
+      const r=await fetch('/api/geocode?q='+encodeURIComponent(q),{signal:controller.signal,headers:{Accept:'application/json'}});
+      const data=await r.json().catch(()=>({}));
+      if(!r.ok) throw new Error(data.error||'Location search failed');
+      render(data.results||[]);
+    }catch(e){
+      if(e.name==='AbortError')return;
+      clearList();setStatus(e.message||'Unable to search location.','err');
+    }
+  }
+  place.addEventListener('input',()=>{
+    place.dataset.locationSelected='0';
+    lat.value='';lon.value='';
+    lastQuery='';
+    clearTimeout(timer);
+    timer=setTimeout(()=>search(place.value.trim()),550);
+  });
+  place.addEventListener('focus',()=>{if(place.value.trim().length>=2 && list.children.length)list.classList.add('show');});
+  document.addEventListener('click',e=>{if(!parent.contains(e.target))clearList();});
+  place.addEventListener('keydown',e=>{
+    if(e.key==='Escape')clearList();
+  });
+})();
+</script>
 </body>
 </html>

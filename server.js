@@ -35,7 +35,7 @@ const RESEND_API_KEY = String(process.env.RESEND_API_KEY || "").trim();
 const RESEND_FROM = String(process.env.RESEND_FROM || "onboarding@resend.dev").trim();
 const RESEND_TEST_RECIPIENT = String(process.env.RESEND_TEST_RECIPIENT || ADMIN_EMAIL || "").trim();
 const GEMINI_API_KEY = String(process.env.GEMINI_API_KEY || "").trim();
-const GEMINI_MODEL = String(process.env.GEMINI_MODEL || "gemini-3.7-flash").trim();
+const GEMINI_MODEL = "gemini-3.7-flash";
 const AI_RATE_LIMIT_MAX = Number(process.env.AI_RATE_LIMIT_MAX || 10);
 const AI_RATE_LIMIT_WINDOW_MS = Number(process.env.AI_RATE_LIMIT_WINDOW_MS || 10 * 60 * 1000);
 const aiRateBuckets = new Map();
@@ -1444,6 +1444,41 @@ function calculateVedicChart(input){
   return chart;
 }
 
+// V142 location autocomplete: server-side geocoding keeps provider details out of the browser.
+const geocodeRateBuckets = new Map();
+app.get("/api/geocode", async (req, res) => {
+  try {
+    const q = String(req.query.q || "").trim();
+    if (q.length < 2) return res.json({ ok:true, results:[] });
+    const ip = String(req.headers["x-forwarded-for"] || req.socket.remoteAddress || "unknown").split(",")[0].trim();
+    const now = Date.now();
+    const last = geocodeRateBuckets.get(ip) || 0;
+    if (now - last < 1100) return res.status(429).json({ error:"Please wait a moment before searching another place." });
+    geocodeRateBuckets.set(ip, now);
+    const url = new URL("https://nominatim.openstreetmap.org/search");
+    url.searchParams.set("q", q);
+    url.searchParams.set("format", "jsonv2");
+    url.searchParams.set("addressdetails", "1");
+    url.searchParams.set("limit", "5");
+    url.searchParams.set("countrycodes", "in");
+    const r = await fetch(url, { headers:{"Accept":"application/json","User-Agent":"SMV-ASTRO/142 birth-place-autocomplete"}, signal:AbortSignal.timeout(8000) });
+    if (!r.ok) return res.status(502).json({ error:"Location service is temporarily unavailable." });
+    const data = await r.json();
+    const results = Array.isArray(data) ? data.map(x => ({
+      place:x.display_name || "",
+      latitude:Number(Number(x.lat).toFixed(6)),
+      longitude:Number(Number(x.lon).toFixed(6)),
+      city:x.address?.city || x.address?.town || x.address?.village || x.address?.municipality || "",
+      state:x.address?.state || "",
+      country:x.address?.country || "India"
+    })).filter(x => Number.isFinite(x.latitude) && Number.isFinite(x.longitude)) : [];
+    return res.json({ ok:true, results });
+  } catch(e) {
+    console.error("Geocode error:", e?.message || e);
+    return res.status(502).json({ error:"Unable to search this place right now. Please try again." });
+  }
+});
+
 app.post("/api/horoscope/calculate", async (req,res)=>{
   try {
     const body=req.body||{};
@@ -1504,23 +1539,30 @@ ${JSON.stringify(chart, null, 2)}
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 30000);
     try {
-      const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(GEMINI_MODEL)}:generateContent`, {
-        method: "POST",
-        headers: { "x-goog-api-key": GEMINI_API_KEY, "Content-Type": "application/json" },
-        body: JSON.stringify({
-          system_instruction: { parts: [{ text: "You are a careful Tamil Vedic astrology interpretation assistant. Use only supplied verified chart data and never claim certainty." }] },
-          contents: [{ role: "user", parts: [{ text: prompt }] }],
-          generationConfig: { maxOutputTokens: 3500 }
-        }),
-        signal: controller.signal
-      });
-      const body = await r.json().catch(() => ({}));
-      if (!r.ok) {
-        const detail = body?.error?.message || `Gemini API HTTP ${r.status}`;
-        return res.status(502).json({ error: `AI service error: ${detail}` });
+      let body = {}, r = null, lastDetail = "";
+      for (let attempt = 0; attempt < 3; attempt++) {
+        r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`, {
+          method: "POST",
+          headers: { "x-goog-api-key": GEMINI_API_KEY, "Content-Type": "application/json" },
+          body: JSON.stringify({
+            system_instruction: { parts: [{ text: "You are a careful Tamil Vedic astrology interpretation assistant. Use only supplied verified chart data and never claim certainty." }] },
+            contents: [{ role: "user", parts: [{ text: prompt }] }],
+            generationConfig: { maxOutputTokens: 2800, thinkingConfig: { thinkingLevel: "low" } }
+          }),
+          signal: controller.signal
+        });
+        body = await r.json().catch(() => ({}));
+        if (r.ok) break;
+        lastDetail = body?.error?.message || `Gemini API HTTP ${r.status}`;
+        if (![429,500,502,503,504].includes(r.status) || attempt === 2) break;
+        await new Promise(resolve => setTimeout(resolve, 1200 * (2 ** attempt)));
       }
-      const text = body?.candidates?.[0]?.content?.parts?.map(p => p.text || "").join("\n").trim();
-      if (!text) return res.status(502).json({ error: "AI service returned an empty interpretation." });
+      if (!r?.ok) {
+        if (r?.status === 503) lastDetail = "Gemini is temporarily busy. The app retried automatically; please try again in a few seconds.";
+        return res.status(502).json({ error: `AI service error: ${lastDetail}` });
+      }
+      const text = body?.candidates?.[0]?.content?.parts?.map(p => p.text || "").join("\\n").trim();
+      if (!text) return res.status(502).json({ error: "AI service returned an empty interpretation. Please try again." });
       return res.json({ ok: true, model: GEMINI_MODEL, text });
     } finally { clearTimeout(timer); }
   } catch (e) {
