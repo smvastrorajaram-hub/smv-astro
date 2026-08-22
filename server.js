@@ -1338,19 +1338,8 @@ function ascendantLongitude(date,lat,lon){
   const tropical=norm360(Math.atan2(Math.cos(theta), -(Math.sin(theta)*Math.cos(e)+Math.tan(phi)*Math.sin(e)))*180/Math.PI);
   return tropical;
 }
-function navamsaSignIndex(siderealLon){
-  const lon=norm360(siderealLon);
-  const rasi=Math.floor(lon/30), part=Math.floor((lon%30)/(30/9));
-  // Navamsa starts: movable=1st sign, fixed=9th, dual=5th; then proceeds sequentially.
-  const mode=rasi%3;
-  const start=mode===0 ? rasi : mode===1 ? (rasi+8)%12 : (rasi+4)%12;
-  return (start+part)%12;
-}
-function navamsaData(lon){
-  const idx=navamsaSignIndex(lon);
-  const part=Math.floor((norm360(lon)%30)/(30/9))+1;
-  return {rasi:VEDIC_RASIS[idx],pada:part};
-}
+// Navamsa is calculated only by swiss_vedic.js from Lahiri-sidereal longitude.
+// Do not maintain a second D9 implementation here.
 function bhavaCuspsEqual(ascLon){
   // Equal-house bhava sphuta: each cusp is exactly 30° from the Ascendant.
   return Array.from({length:12},(_,i)=>norm360(ascLon+i*30));

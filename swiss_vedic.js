@@ -20,10 +20,26 @@ function norm360(x){ x%=360; return x<0?x+360:x; }
 function zodiac(lon){ const x=norm360(lon), i=Math.floor(x/30), d=x-i*30; return {index:i,sign:RASIS[i],degree:d}; }
 function degText(x){ const z=zodiac(x), d=Math.floor(z.degree), m=Math.floor((z.degree-d)*60); return `${String(d).padStart(2,'0')}° ${String(m).padStart(2,'0')}′`; }
 function nakshatra(lon){ const span=360/27, q=norm360(lon), i=Math.floor(q/span), within=q-i*span; return {index:i,name:NAKSHATRAS[i],pada:Math.floor(within/(span/4))+1,lord:NAK_LORDS[i%9]}; }
+// Single source of truth for Parashari D9 (Navamsa).
+// Input MUST be Lahiri-sidereal longitude from Swiss Ephemeris.
+// Each Rasi = 30 degrees and each Navamsa/Pada = 3°20'.
+// Parashari rule: movable -> starts from itself; fixed -> 9th; dual -> 5th.
 function navamsa(lon){
-  const q=norm360(lon), r=Math.floor(q/30), part=Math.min(8,Math.floor((q%30)/(30/9)));
-  const start=r%3===0?r:r%3===1?(r+8)%12:(r+4)%12;
-  return {rasi:RASIS[(start+part)%12],pada:part+1};
+  const q = norm360(Number(lon));
+  if(!Number.isFinite(q)) throw new Error('Navamsa: invalid sidereal longitude');
+  const rasiIndex = Math.floor(q / 30);
+  const withinRasi = q - rasiIndex * 30;
+  const part = Math.min(8, Math.floor(withinRasi / (30 / 9))); // 0..8
+  const modality = rasiIndex % 3; // 0 movable, 1 fixed, 2 dual
+  const startRasi = modality === 0 ? rasiIndex : modality === 1 ? (rasiIndex + 8) % 12 : (rasiIndex + 4) % 12;
+  const navamsaIndex = (startRasi + part) % 12;
+  return {
+    rasi: RASIS[navamsaIndex],
+    rasiIndex: navamsaIndex,
+    pada: part + 1,
+    part: part + 1,
+    degreeInRasi: withinRasi
+  };
 }
 function setEphe(){
   const configured=process.env.SWISSEPH_EPHE_PATH || '';

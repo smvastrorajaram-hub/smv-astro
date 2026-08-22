@@ -1162,45 +1162,46 @@ textarea[id^="adminAns_"]{
   }
 }
 </style>
-<style>@media print{header,footer,.action-row,#quickActions,#approved-astrologers,#faq,#contact,#register-flow,#dashboard,#admin,#astro-register-form,#astro-flow,#ask-flow{display:none!important}body{background:#fff!important}.container{padding:0!important}.feature-section{display:none!important}#tamil-horoscope,#english-horoscope{display:block!important}.card{box-shadow:none!important;border:0!important}}</style>
+<style>@media print{header,footer,.action-row,#quickActions,#approved-astrologers,#faq,#contact,#register-flow,#dashboard,#admin,#astro-register-form,#astro-flow,#ask-flow{display:none!important}body{background:#fff!important}.container{padding:0!important}.feature-section{display:none!important}#tamil-horoscope{display:block!important}.card{box-shadow:none!important;border:0!important}}</style>
 
 
 <style id="smv-v151-dasha-touch-fix">
-#tamilHoroscopeResult .dasha-node>.dasha-head, #englishHoroscopeResult .dasha-node>.dasha-head{pointer-events:auto!important;touch-action:manipulation!important;cursor:pointer!important;position:relative;z-index:2;}
-#tamilHoroscopeResult .dasha-node.open>.dasha-body, #englishHoroscopeResult .dasha-node.open>.dasha-body{display:block!important;}
+#tamilHoroscopeResult .dasha-node>.dasha-head .dasha-node>.dasha-head{pointer-events:auto!important;touch-action:manipulation!important;cursor:pointer!important;position:relative;z-index:2;}
+#tamilHoroscopeResult .dasha-node.open>.dasha-body .dasha-node.open>.dasha-body{display:block!important;}
 </style>
 <style id="smv-v147-readable-dasha">
 /* V147 comfortable reading: larger horoscope typography on mobile and desktop. */
-#tamilHoroscopeResult, #englishHoroscopeResult{font-size:16px;line-height:1.65}
-#tamilHoroscopeResult .small, #englishHoroscopeResult .small{font-size:14px;line-height:1.6}
-#tamilHoroscopeResult h2, #englishHoroscopeResult h2{font-size:clamp(26px,4vw,34px);line-height:1.25}
-#tamilHoroscopeResult h3, #englishHoroscopeResult h3{font-size:clamp(20px,3vw,26px);line-height:1.3}
-#tamilHoroscopeResult .stat, #englishHoroscopeResult .stat{font-size:16px}
-#tamilHoroscopeResult .data-table, #englishHoroscopeResult .data-table{font-size:15px}
-#tamilHoroscopeResult .data-table th, #englishHoroscopeResult .data-table th{font-size:15px;font-weight:800}
-#tamilHoroscopeResult .south-rasi-cell .sign, #englishHoroscopeResult .south-rasi-cell .sign{font-size:clamp(14px,2.6vw,18px)}
-#tamilHoroscopeResult .south-rasi-cell .planet-line, #englishHoroscopeResult .south-rasi-cell .planet-line{font-size:clamp(13px,2.5vw,17px);line-height:1.45}
-#tamilHoroscopeResult .south-rasi-cell .planet-degree, #englishHoroscopeResult .south-rasi-cell .planet-degree{font-size:.9em}
-#tamilHoroscopeResult .dasha-head, #englishHoroscopeResult .dasha-head{font-size:16px;min-height:52px}
-#tamilHoroscopeResult .dasha-title, #englishHoroscopeResult .dasha-title{font-size:17px}
-#tamilHoroscopeResult .dasha-dates, #englishHoroscopeResult .dasha-dates{font-size:14px}
-#tamilHoroscopeResult .dasha-subtable, #englishHoroscopeResult .dasha-subtable{font-size:14px}
+#tamilHoroscopeResult{font-size:16px;line-height:1.65}
+#tamilHoroscopeResult .small{font-size:14px;line-height:1.6}
+#tamilHoroscopeResult h2{font-size:clamp(26px,4vw,34px);line-height:1.25}
+#tamilHoroscopeResult h3{font-size:clamp(20px,3vw,26px);line-height:1.3}
+#tamilHoroscopeResult .stat{font-size:16px}
+#tamilHoroscopeResult .data-table{font-size:15px}
+#tamilHoroscopeResult .data-table th{font-size:15px;font-weight:800}
+#tamilHoroscopeResult .south-rasi-cell .sign{font-size:clamp(14px,2.6vw,18px)}
+#tamilHoroscopeResult .south-rasi-cell .planet-line{font-size:clamp(13px,2.5vw,17px);line-height:1.45}
+#tamilHoroscopeResult .south-rasi-cell .planet-degree{font-size:.9em}
+#tamilHoroscopeResult .dasha-head{font-size:16px;min-height:52px}
+#tamilHoroscopeResult .dasha-title{font-size:17px}
+#tamilHoroscopeResult .dasha-dates{font-size:14px}
+#tamilHoroscopeResult .dasha-subtable{font-size:14px}
 .smv-dasha-next{margin:0 0 12px;padding:12px 14px;border:1px solid #d8b866;border-radius:11px;background:#fff8e9;font-size:15px;line-height:1.65}
 .smv-dasha-next b{color:#7e1818}
 @media(max-width:760px){
-  #tamilHoroscopeResult, #englishHoroscopeResult{font-size:16px}
-  #tamilHoroscopeResult .small, #englishHoroscopeResult .small{font-size:14px}
-  #tamilHoroscopeResult .data-table, #englishHoroscopeResult .data-table{font-size:14px}
-  #tamilHoroscopeResult .data-table th, #englishHoroscopeResult .data-table th{font-size:14px}
-  #tamilHoroscopeResult .south-rasi-cell .planet-line, #englishHoroscopeResult .south-rasi-cell .planet-line{font-size:14px}
-  #tamilHoroscopeResult .south-rasi-cell .sign, #englishHoroscopeResult .south-rasi-cell .sign{font-size:15px}
-  #tamilHoroscopeResult .dasha-head, #englishHoroscopeResult .dasha-head{font-size:15px;padding:13px 12px}
-  #tamilHoroscopeResult .dasha-title, #englishHoroscopeResult .dasha-title{font-size:16px}
-  #tamilHoroscopeResult .dasha-dates, #englishHoroscopeResult .dasha-dates{font-size:13px}
+  #tamilHoroscopeResult{font-size:16px}
+  #tamilHoroscopeResult .small{font-size:14px}
+  #tamilHoroscopeResult .data-table{font-size:14px}
+  #tamilHoroscopeResult .data-table th{font-size:14px}
+  #tamilHoroscopeResult .south-rasi-cell .planet-line{font-size:14px}
+  #tamilHoroscopeResult .south-rasi-cell .sign{font-size:15px}
+  #tamilHoroscopeResult .dasha-head{font-size:15px;padding:13px 12px}
+  #tamilHoroscopeResult .dasha-title{font-size:16px}
+  #tamilHoroscopeResult .dasha-dates{font-size:13px}
 }
 </style>
 </head>
 <body>
+<!-- V154: Keep Tamil Horoscope only; remove English Horoscope section completely. -->
 <header>
 <div class="nav">
 <div class="brand">
@@ -1244,9 +1245,8 @@ textarea[id^="adminAns_"]{
 <div class="card" style="max-width:980px;margin:0 auto">
   <div class="action-row" style="margin-bottom:18px;justify-content:center">
     <a class="btn" href="#tamil-horoscope">🇮🇳 தமிழ் ஜாதகம்</a>
-    <a class="btn gray" href="#english-horoscope">🇬🇧 English Horoscope</a>
   </div>
-  <p class="small" style="text-align:center">Tamil and English horoscope generation are separate sections. The website header language selector is intentionally removed.</p>
+  <p class="small" style="text-align:center">தமிழ் ஜாதகம் உருவாக்கம்</p>
 </div>
 </section>
 
@@ -1273,28 +1273,6 @@ textarea[id^="adminAns_"]{
 </div>
 </section>
 
-<section class="feature-section" id="english-horoscope">
-<div class="home-rule"><span>✦</span><span>ENGLISH HOROSCOPE</span><span>✦</span></div>
-<div class="card" style="max-width:980px;margin:0 auto">
-  <h2>Create Horoscope in English</h2>
-  <p class="small">Enter birth date, birth time and select the exact birth place. Latitude and longitude will be filled automatically from the selected location.</p>
-  <div class="grid">
-    <div><label class="small"><b>Name</b></label><input id="englishAstroName" placeholder="Your name" maxlength="80"></div>
-    <div><label class="small"><b>Rasi</b></label><select id="englishRasi"><option>Aries</option><option>Taurus</option><option>Gemini</option><option>Cancer</option><option>Leo</option><option>Virgo</option><option>Libra</option><option>Scorpio</option><option>Sagittarius</option><option>Capricorn</option><option>Aquarius</option><option>Pisces</option></select></div>
-    <div><label class="small"><b>Date of Birth</b></label><input id="englishDob" type="date"></div>
-    <div><label class="small"><b>Time of Birth</b></label><input id="englishTob" type="time"></div>
-    <div><label class="small"><b>Place of Birth</b></label><input id="englishBirthPlace" placeholder="City, State or City, State, Country" maxlength="120"></div>
-    <div><label class="small"><b>Latitude</b></label><input id="englishLat" type="number" step="0.000001" min="-90" max="90" placeholder="e.g. 11.230000"></div>
-    <div><label class="small"><b>Longitude</b></label><input id="englishLon" type="number" step="0.000001" min="-180" max="180" placeholder="e.g. 78.879997"></div>
-    <div><label class="small"><b>Nakshatra (Optional)</b></label><input id="englishNakshatra" placeholder="e.g. Rohini" maxlength="50"></div>
-  </div>
-  <div class="action-row">
-    <button class="btn" id="generateEnglishHoroscope" type="button">🔮 Create Horoscope in English</button>
-    <button class="btn gray" id="clearEnglishHoroscope" type="button">Reset</button>
-  </div>
-  <div id="englishHoroscopeResult" class="hidden" style="margin-top:20px"></div>
-</div>
-</section>
 
 <section class="feature-section" id="faq">
 <div class="home-rule"><span>✦</span><span>FREQUENTLY ASKED QUESTIONS</span><span>✦</span></div>
@@ -1634,8 +1612,8 @@ window.__smvOpenQuestionService=openQuestionService;
   window.__smvOpenRegister=openRegister;
 
 function hidePublicHoroscopeSections(){
-  ['horoscope-tools','tamil-horoscope','english-horoscope'].forEach(id=>hide(id));
-  ['tamilHoroscopeResult','englishHoroscopeResult'].forEach(id=>{const el=$(id);if(el){el.classList.add('hidden');el.innerHTML='';}});
+  ['horoscope-tools','tamil-horoscope'].forEach(id=>hide(id));
+  ['tamilHoroscopeResult'].forEach(id=>{const el=$(id);if(el){el.classList.add('hidden');el.innerHTML='';}});
 }
 if($("authBtn") && $("authBtn").dataset.smvAuthBound!=="1"){ $("authBtn").dataset.smvAuthBound="1"; $("authBtn").addEventListener("click",async()=>{try{hidePublicHoroscopeSections();if(currentUser){await logoutToHome();}else{openAuth("login");}}catch(e){console.error("SMV login action failed",e);}}); }
 $("registerNav")?.addEventListener("click",()=>openRegister());
@@ -1644,7 +1622,7 @@ $("registerNav")?.addEventListener("click",()=>openRegister());
 // temporarily hides them. It does not change the website-wide language.
 $("horoscopeNav")?.addEventListener("click",(e)=>{
   e.preventDefault(); e.stopPropagation();
-  ["horoscope-tools","tamil-horoscope","english-horoscope"].forEach(id=>show(id));
+  ["horoscope-tools","tamil-horoscope"].forEach(id=>show(id));
   window.__smvPublicHoroscopeVisible = true;
   const target=$("tamil-horoscope");
   if(target) target.scrollIntoView({behavior:"smooth",block:"start"});
@@ -3952,61 +3930,8 @@ window.__SMV_APP_READY=true;
   const rasiList=['மேஷம்','ரிஷபம்','மிதுனம்','கடகம்','சிம்மம்','கன்னி','துலாம்','விருச்சிகம்','தனுசு','மகரம்','கும்பம்','மீனம்'];
   const rasiIndex=r=>rasiList.indexOf(r);
   const signIcon=['♈','♉','♊','♋','♌','♍','♎','♏','♐','♑','♒','♓'];
-  function getHoroscopeLang(){try{return localStorage.getItem('smvLanguage')==='ta'?'ta':'en';}catch(_e){return 'en';}}
-  const EN={
-    'மேஷம்':'Aries','ரிஷபம்':'Taurus','மிதுனம்':'Gemini','கடகம்':'Cancer','சிம்மம்':'Leo','கன்னி':'Virgo','துலாம்':'Libra','விருச்சிகம்':'Scorpio','தனுசு':'Sagittarius','மகரம்':'Capricorn','கும்பம்':'Aquarius','மீனம்':'Pisces',
-    'கேது':'Ketu','சுக்கிரன்':'Venus','சூரியன்':'Sun','சந்திரன்':'Moon','செவ்வாய்':'Mars','ராகு':'Rahu','குரு':'Jupiter','சனி':'Saturn','புதன்':'Mercury','லக்னம்':'Ascendant',
-    'அஸ்வினி':'Ashwini','பரணி':'Bharani','கார்த்திகை':'Krittika','ரோகிணி':'Rohini','மிருகசீரிடம்':'Mrigashira','திருவாதிரை':'Ardra','புனர்பூசம்':'Punarvasu','பூசம்':'Pushya','ஆயில்யம்':'Ashlesha','மகம்':'Magha','பூரம்':'Purva Phalguni','உத்திரம்':'Uttara Phalguni','ஹஸ்தம்':'Hasta','சித்திரை':'Chitra','சுவாதி':'Swati','விசாகம்':'Vishakha','அனுஷம்':'Anuradha','கேட்டை':'Jyeshtha','மூலம்':'Mula','பூராடம்':'Purva Ashadha','உத்திராடம்':'Uttara Ashadha','திருவோணம்':'Shravana','அவிட்டம்':'Dhanishta','சதயம்':'Shatabhisha','பூரட்டாதி':'Purva Bhadrapada','உத்திரட்டாதி':'Uttara Bhadrapada','ரேவதி':'Revati',
-    'பாதம்':'Pada','பிறந்த தேதி':'Date of Birth','நேரம்':'Time','பிறந்த இடம்':'Place of Birth','ராசி':'Rasi','நட்சத்திரம்':'Nakshatra','நெடுவரை':'Longitude','சந்திர ராசி':'Moon Rasi','அயனாம்சம்':'Ayanamsa','பாவம்':'Bhava','பாவக':'Bhava','கட்டம்':'Chart','ஆரம்பம்':'Arambha','மத்தியம்':'Madhya','முடிவு':'Antya','ஸ்புடம்':'Sphuta','ஸ்புட ராசி':'Sphuta Rasi','கிரகங்கள்':'Planets','கிரகம்':'Planet','பாகை':'Degree','நவாம்சம்':'Navamsa','நவாம்ச பாதம்':'Navamsa Pada','நவாம்ச நிலைகள்':'Navamsa Positions','பிறப்பு விவரங்கள்':'Birth Details','கிரக நிலைகள்':'Planetary Positions','விம்சோத்தரி தசா':'Vimshottari Dasha','தற்போதைய / அடுத்த தசா':'Current / Next Dasha','அடுத்தது':'Next','அடுத்த புக்தி':'Next Bhukti','அடுத்த அந்தரம்':'Next Antara','மகாதசை':'Mahadasha','புக்தி':'Bhukti','அந்தர்தசை':'Antardasha','அந்தரம்':'Antara','பிரத்யந்தர்தசை':'Pratyantara Dasha','தொடக்கம்':'Start','முடிவு':'End','அடுத்த நிலை தகவல் இல்லை.':'No next-level information.','புக்தி தகவல் இல்லை.':'No Bhukti information.','அந்தர காலங்கள் இல்லை.':'No Antara periods.','9 துணைக் காலங்கள்':'9 sub-periods',
-    'தமிழ் ஜாதக கணக்கீடு':'Horoscope Calculation','D-1 ராசி':'D-1 Rasi','நவாம்ச கட்டம் (D9)':'Navamsa Chart (D9)','ஒவ்வொரு கிரகத்தின் D9 நவாம்ச ராசி, லக்ன நவாம்சம் உட்பட.':'D9 Navamsa sign for each planet, including the Navamsa Ascendant.','பாவக கட்டம்':'Bhava Chart','பாவக கட்டம் (Bhava Table)':'Bhava Chart (Bhava Table)','நவாம்ச நிலைகள்':'Navamsa Positions','சரிபார்க்கப்பட்ட ஜாதகத் தரவை AI விளக்குகிறது...':'AI is interpreting the verified horoscope data...','AI எதிர்கால பலன்':'AI Future Insights','AI எதிர்கால பலன் உருவாக்குக':'Generate AI Future Insights','AI பலன் உருவாக்கப்படுகிறது...':'Generating AI Future Insights...','குறிப்பு':'Note','ஜாதக கணக்கீட்டு உரை நகலெடுக்கப்பட்டது.':'Horoscope calculation text copied.','நகலெடுக்க முடியவில்லை.':'Unable to copy.','மீட்டமை':'Reset','தமிழில் ஜாதகம் உருவாக்குக':'Create Horoscope in Tamil','தமிழ் ஜாதகம்':'Tamil Horoscope','தமிழ் ஜோதிட வழிகாட்டி':'Tamil Astrology Guide',
-    'உங்கள் பெயர்':'Your name','நகரம், மாநிலம்':'City, State','எ.கா. 13.0827':'e.g. 13.0827','எ.கா. 80.2707':'e.g. 80.2707','எ.கா. ரோகிணி':'e.g. Rohini','நட்சத்திரம் (விருப்பம்)':'Nakshatra (Optional)','பெயர்':'Name','பிறந்த தேதி':'Date of Birth','பிறந்த நேரம்':'Birth Time','பிறந்த இடம்':'Birth Place','ராசி':'Rasi',
-    'பிறந்த நேரம் சரியாக உள்ளிடவும். உதாரணம்: 22:05 (10:05 PM).':'Enter the birth time correctly. Example: 22:05 (10:05 PM).','பிறந்த தேதி மற்றும் பிறந்த நேரத்தை உள்ளிடவும்.':'Enter the date and time of birth.','முதலில் Birth Place-ல் காட்டப்படும் location suggestion-ஐ தேர்வு செய்யவும். Latitude மற்றும் Longitude தானாக நிரப்பப்படும்.':'First select the location suggestion shown for Birth Place. Latitude and Longitude will be filled automatically.','Birth Place-ஐ தேர்வு செய்யவும்; Latitude மற்றும் Longitude தானாக நிரப்பப்படும்.':'Select the Birth Place; Latitude and Longitude will be filled automatically.',
-    'ஒவ்வொரு கிரகமும் தனி வரியில்: ராசி · பாகை · நட்சத்திரம் · பாதம்.':'Each planet is shown on a separate row: Rasi · Degree · Nakshatra · Pada.','மகாதசையை touch செய்தால்':'Tap a Mahadasha to open','புக்தியை touch செய்தால்':'Tap a Bhukti to open','பிறந்த நேர சந்திரனின் நட்சத்திரத்தை அடிப்படையாகக் கொண்ட ஆரம்ப மகாதசா balance':'Initial Mahadasha balance based on the Moon’s birth Nakshatra','ஆண்டுகள்':'years',
-    'இது astronomical ephemeris அடிப்படையிலான கணக்கீட்டு layer.':'This is an astronomical ephemeris-based calculation layer.','பாரம்பரிய ஜோதிட பலன்கள் விளக்க/நம்பிக்கை சார்ந்தவை; முக்கிய வாழ்க்கை முடிவுகளுக்கு இதை ஒரே ஆதாரமாக பயன்படுத்த வேண்டாம்.':'Traditional astrology interpretations are belief-based; do not use them as the sole basis for important life decisions.',
-    'உங்கள் சரிபார்க்கப்பட்ட ஜாதகக் கணக்கீட்டுத் தரவை மட்டும் அடிப்படையாகக் கொண்டு தமிழ் AI விளக்கத்தை உருவாக்கலாம். AI கணக்கீட்டுத் தரவை மாற்றாது; எதிர்காலத்தை உறுதி செய்யாது.':'AI can generate an interpretation using only your verified horoscope calculation data. AI does not alter the calculation data and does not guarantee the future.',
-    'உங்கள் சரிபார்க்கப்பட்ட ஜாதகக் கணக்கீட்டு தரவை மட்டும் அடிப்படையாகக் கொண்டு தமிழ் AI விளக்கத்தை உருவாக்கலாம். AI கணக்கீட்டு தரவை மாற்றாது; எதிர்காலத்தை உறுதி செய்யாது.':'AI can generate an interpretation using only your verified horoscope calculation data. AI does not alter the calculation data and does not guarantee the future.',
-    'இங்கு பாவ ஸ்புடம்':'Here Bhava Sphuta','Swiss Ephemeris':'Swiss Ephemeris','லஹிரி + ஸ்ரீபதி':'Lahiri + Sripati','முறையில் கணக்கிடப்படுகிறது.':'method is used for calculation.','பிறந்த நேரம் India Standard Time (UTC+05:30) ஆக இருந்தால் சரியாக UTC-க்கு மாற்றப்பட்ட பிறகே house cusps கணக்கிடப்படும்.':'When the birth time is India Standard Time (UTC+05:30), it is converted to UTC before calculating house cusps.','South Indian Bhava Chalit-ல் ராசி பெட்டிகள் நிலையாக இருக்கும்.':'In the South Indian Bhava Chalit, the Rasi boxes remain fixed.'
-  };
+  function getHoroscopeLang(){return 'ta';}
   function fmtDate(v){if(!v)return '—';try{return new Date(v+'T00:00:00').toLocaleDateString(getHoroscopeLang()==='ta'?'ta-IN':'en-IN',{day:'2-digit',month:'long',year:'numeric'});}catch{return v;}}
-  function englishTextNode(text){
-    let out=String(text||'');
-    Object.keys(EN).sort((a,b)=>b.length-a.length).forEach(k=>{out=out.split(k).join(EN[k]);});
-    out=out.replace(/(\d+)-ம் பாவம்/g,(_,n)=>{const ord=n==='1'?'1st':n==='2'?'2nd':n==='3'?'3rd':n+'th';return ord+' Bhava';});
-    out=out.replace(/பா\.(\d+)/g,'Bhava $1');
-    return out;
-  }
-  function applyEnglishToHoroscope(root){
-    if(!root)return;
-    const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
-    let n; while(n=walker.nextNode()){ if(!n.nodeValue.trim()||n.parentElement?.closest('script,style'))continue; n.nodeValue=englishTextNode(n.nodeValue); }
-    root.querySelectorAll('th,button,[aria-label]').forEach(el=>{
-      if(el.childNodes.length===1&&el.firstChild.nodeType===3)el.firstChild.nodeValue=englishTextNode(el.firstChild.nodeValue);
-      if(el.hasAttribute('aria-label'))el.setAttribute('aria-label',englishTextNode(el.getAttribute('aria-label')));
-    });
-  }
-  function applyHoroscopeLanguage(lang){
-    const ta=lang!=='en';
-    const heading=document.querySelector('#tamil-horoscope h2');
-    const sectionRule=document.querySelector('#tamil-horoscope .home-rule span:nth-child(2)');
-    const btn=$('generateTamilHoroscope'), clear=$('clearTamilHoroscope');
-    const labels=[...document.querySelectorAll('#tamil-horoscope label b')];
-    const texts=ta?['பெயர்','ராசி','பிறந்த தேதி','பிறந்த நேரம்','பிறந்த இடம்','Latitude','Longitude','நட்சத்திரம் (விருப்பம்)']:['Name','Rasi','Date of Birth','Birth Time','Birth Place','Latitude','Longitude','Nakshatra (Optional)'];
-    labels.forEach((el,i)=>{if(texts[i])el.textContent=texts[i];});
-    if(heading)heading.textContent=ta?'தமிழில் ஜாதகம் உருவாக்குக':'Create Horoscope in English';
-    if(sectionRule)sectionRule.textContent=ta?'தமிழ் ஜோதிட வழிகாட்டி':'English Horoscope';
-    if(btn){btn.textContent=ta?'🔮 தமிழில் ஜாதகம் உருவாக்குக':'🔮 Create Horoscope in English';}
-    if(clear)clear.textContent=ta?'மீட்டமை':'Reset';
-    const fields={tamilAstroName:ta?'உங்கள் பெயர்':'Your name',tamilBirthPlace:ta?'நகரம், மாநிலம்':'City, State',tamilNakshatra:ta?'எ.கா. ரோகிணி':'e.g. Rohini',tamilLat:ta?'எ.கா. 13.0827':'e.g. 13.0827',tamilLon:ta?'எ.கா. 80.2707':'e.g. 80.2707'};
-    Object.entries(fields).forEach(([id,v])=>{const el=$(id);if(el)el.placeholder=v;});
-    const r=$('tamilRasi');
-    if(r){
-      const vals=['மேஷம்','ரிஷபம்','மிதுனம்','கடகம்','சிம்மம்','கன்னி','துலாம்','விருச்சிகம்','தனுசு','மகரம்','கும்பம்','மீனம்'];
-      [...r.options].forEach((o,i)=>o.textContent=ta?vals[i]:EN[vals[i]]);
-    }
-    const result=$('tamilHoroscopeResult');
-    if(result && !result.classList.contains('hidden') && lang==='en')applyEnglishToHoroscope(result);
-    window.__smvApplyHoroscopeLanguage=applyHoroscopeLanguage;
-  }
   function rows(items){return items.map(x=>`<tr><td><b>${esc(x.name)}</b></td><td>${esc(x.rasi)}</td><td>${esc(x.degree)}</td><td>${esc(x.nakshatra)}</td><td>பாதம் ${x.pada}</td></tr>`).join('');}
   function render(d){
     const result=$('tamilHoroscopeResult');
@@ -4147,10 +4072,9 @@ window.__SMV_APP_READY=true;
       if(firstOpen){firstOpen.classList.add('open');firstOpen.querySelector(':scope > .dasha-head')?.setAttribute('aria-expanded','true');}
     }
     result.classList.remove('hidden');
-    if(getHoroscopeLang()==='en') applyEnglishToHoroscope(result);
     $('printTamilHoroscope')?.addEventListener('click',()=>window.print());
     $('copyTamilHoroscope')?.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(result.innerText);alert('ஜாதக கணக்கீட்டு உரை நகலெடுக்கப்பட்டது.');}catch(e){alert('நகலெடுக்க முடியவில்லை.');}});
-    bindHoroscopeInteractions(result,d,name,getHoroscopeLang());
+    bindHoroscopeInteractions(result,d,name,'ta');
     result.scrollIntoView({behavior:'smooth',block:'start'});
   }
   function bindHoroscopeInteractions(root,d,name,lang){
@@ -4205,39 +4129,7 @@ window.__SMV_APP_READY=true;
         bhuktiNode.querySelector(':scope > .dasha-head')?.setAttribute('aria-expanded','true');
       }
     }
-    const aiBtn=root.querySelector('#generateAIFuture');
-    if(aiBtn && aiBtn.dataset.smvBound!=='1'){
-      aiBtn.dataset.smvBound='1';
-      aiBtn.type='button';
-      aiBtn.addEventListener('click',(ev)=>{
-        ev.preventDefault(); ev.stopPropagation();
-        generateAIFuture(d,name,lang,root);
-      });
-    }
-  }
-
-  async function generateAIFuture(d,name,langOverride,root){
-    const scope=root||document;
-    const btn=scope.querySelector('#generateAIFuture'), box=scope.querySelector('#aiFutureResult');
-    if(!btn||!box)return;
-    const lang=langOverride==='ta'||langOverride==='en'?langOverride:getHoroscopeLang();
-    btn.disabled=true; btn.textContent=lang==='en'?'⏳ Generating AI Future Insights...':'⏳ AI பலன் உருவாக்கப்படுகிறது...';
-    box.classList.remove('hidden'); box.innerHTML=`<p class="small">${lang==='en'?'AI is interpreting the verified horoscope data...':'சரிபார்க்கப்பட்ட ஜாதகத் தரவை AI விளக்குகிறது...'}</p>`;
-    const chart={
-      moonRasi:d.moonRasi, moonNakshatra:d.moonNakshatra, moonPada:d.moonPada,
-      lagna:d.lagna, ayanamsa:d.ayanamsa, ayanamsaName:d.ayanamsaName,
-      planets:(d.planets||[]).map(p=>({name:p.name,rasi:p.rasi,degree:p.degree,nakshatra:p.nakshatra,pada:p.pada,bhava:p.bhava,navamsa:p.navamsa?.rasi||null})),
-      bhavas:(d.bhavas||[]).map(b=>({house:b.house,arambha:b.arambha,madhya:b.madhya,antya:b.antya,rasi:b.rasi})),
-      dashas:(d.dashas?.mahadashas||d.dashas?.periods||[]).slice(0,12).map(x=>({name:x.name,start:x.start,end:x.end}))
-    };
-    try{
-      const r=await fetch((window.SMV_BACKEND_URL||'https://smv-astro-1fco.onrender.com')+'/api/horoscope/ai-future',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chart,language:lang})});
-      const body=await r.json().catch(()=>({}));
-      if(!r.ok)throw new Error(body.error||`AI generation failed (HTTP ${r.status})`);
-      const text=String(body.text||'').trim();
-      box.innerHTML=`<div class="home-rule"><span>✦</span><span>${lang==='en'?'AI Future Insights':'AI எதிர்கால பலன்'}</span><span>✦</span></div><p class="small">${esc(name)} · ${esc(body.model||'Gemini')}</p><div style="white-space:pre-wrap;line-height:1.75">${esc(text)}</div><p class="small" style="margin-top:14px"><b>${lang==='en'?'Note':'குறிப்பு'}:</b> ${lang==='en'?'This is a traditional astrology interpretation based on verified horoscope data; it is not a guarantee of future events.':'இது சரிபார்க்கப்பட்ட ஜாதகத் தரவை அடிப்படையாகக் கொண்ட பாரம்பரிய ஜோதிட விளக்கம் மட்டுமே; எதிர்கால நிகழ்வுகளுக்கான உத்தரவாதம் அல்ல.'}</p>`;
-    }catch(e){box.innerHTML=`<div class="error"><b>${lang==='en'?'AI Future Insights could not be generated.':'AI பலன் உருவாக்க முடியவில்லை.'}</b><p class="small">${esc(e?.message||String(e))}</p></div>`;}
-    finally{btn.disabled=false;btn.textContent=lang==='en'?'🔮 Generate AI Future Insights':'🔮 AI எதிர்கால பலன் உருவாக்குக';}
+    return;
   }
 
   async function generate(){
@@ -4269,16 +4161,10 @@ window.__SMV_APP_READY=true;
   }
   $('generateTamilHoroscope')?.addEventListener('click',()=>{
     try{localStorage.setItem('smvLanguage','ta');}catch(_e){}
-    $('englishHoroscopeResult')?.classList.add('hidden');
-    if($('englishHoroscopeResult'))$('englishHoroscopeResult').innerHTML='';
     generate();
   });
-  $('clearTamilHoroscope')?.addEventListener('click',()=>{['tamilAstroName','tamilDob','tamilTob','tamilBirthPlace','tamilNakshatra','tamilLat','tamilLon'].forEach(id=>{if($(id))$(id).value='';});if($('tamilBirthPlace')){$('tamilBirthPlace').dataset.locationSelected='0';$('tamilBirthPlace').dataset.latitude='';$('tamilBirthPlace').dataset.longitude='';}if($('tamilRasi'))$('tamilRasi').value='மேஷம்';if($('tamilHoroscopeResult')){$('tamilHoroscopeResult').classList.add('hidden');$('tamilHoroscopeResult').innerHTML='';}if($('englishHoroscopeResult')){$('englishHoroscopeResult').classList.add('hidden');$('englishHoroscopeResult').innerHTML='';}});
-  // V149: expose horoscope helpers so the separate English section can safely
-  // reuse the renderer without relying on JavaScript lexical scope from another IIFE.
-  window.__smvApplyEnglishToHoroscope = applyEnglishToHoroscope;
+  $('clearTamilHoroscope')?.addEventListener('click',()=>{['tamilAstroName','tamilDob','tamilTob','tamilBirthPlace','tamilNakshatra','tamilLat','tamilLon'].forEach(id=>{if($(id))$(id).value='';});if($('tamilBirthPlace')){$('tamilBirthPlace').dataset.locationSelected='0';$('tamilBirthPlace').dataset.latitude='';$('tamilBirthPlace').dataset.longitude='';}if($('tamilRasi'))$('tamilRasi').value='மேஷம்';if($('tamilHoroscopeResult')){$('tamilHoroscopeResult').classList.add('hidden');$('tamilHoroscopeResult').innerHTML='';}});
   window.__smvBindHoroscopeInteractions = bindHoroscopeInteractions;
-  window.__smvGenerateAIFuture = generateAIFuture;
   window.__smvGenerateHoroscopeEngine=generate;
 })();
 </script>
@@ -4955,73 +4841,6 @@ document.addEventListener("click",function(e){
 })();
 </script>
 
-<style id="smv-v145-location-css">
-.smv-location-wrap{position:relative}
-.smv-location-suggestions{position:absolute;left:0;right:0;top:100%;z-index:1000;background:#fff;border:1px solid #d8c9a8;border-radius:10px;box-shadow:0 10px 28px rgba(44,31,20,.16);overflow:hidden;display:none}
-.smv-location-suggestions.show{display:block}
-.smv-location-suggestion{display:block;width:100%;border:0;background:#fff;text-align:left;padding:11px 13px;cursor:pointer;font:inherit;color:#2b2448}
-.smv-location-suggestion:hover,.smv-location-suggestion:focus{background:#f8f1df;outline:none}
-.smv-location-status{font-size:.82rem;margin-top:5px;min-height:1.1em;color:#6b6258}.smv-location-status.ok{color:#2d6a3f}.smv-location-status.err{color:#a43d3d}
-</style>
-<script id="smv-v145-english-location-and-generator">
-(function(){
-  const BACKEND_URL='https://smv-astro-1fco.onrender.com';
-  const $=id=>document.getElementById(id);
-
-  function setupLocation(prefix){
-    const place=$(prefix+'BirthPlace'),lat=$(prefix+'Lat'),lon=$(prefix+'Lon');
-    if(!place||!lat||!lon||place.dataset.smvLocationBound==='1')return;
-    place.dataset.smvLocationBound='1';
-    const parent=place.parentElement; parent.classList.add('smv-location-wrap');
-    const list=document.createElement('div'); list.className='smv-location-suggestions'; list.setAttribute('role','listbox'); parent.appendChild(list);
-    const status=document.createElement('div'); status.className='smv-location-status'; parent.appendChild(status);
-    let timer=null,controller=null,lastQuery='';
-    function clear(){list.innerHTML='';list.classList.remove('show');}
-    function statusText(t,c){status.textContent=t||'';status.className='smv-location-status'+(c?' '+c:'');}
-    function choose(x){place.value=x.place||'';lat.value=Number(x.latitude).toFixed(6);lon.value=Number(x.longitude).toFixed(6);place.dataset.locationSelected='1';place.dataset.latitude=String(x.latitude);place.dataset.longitude=String(x.longitude);clear();statusText('Location selected — latitude and longitude filled automatically.','ok');}
-    function render(items){clear();if(!items.length){statusText('No matching location found. Please type a little more.','err');return;}items.forEach(x=>{const b=document.createElement('button');b.type='button';b.className='smv-location-suggestion';b.setAttribute('role','option');b.textContent=x.place;b.addEventListener('click',()=>choose(x));list.appendChild(b);});list.classList.add('show');statusText('Select your exact place from the list.','');}
-    async function search(q){if(q.length<2){clear();statusText('','');return;}if(q===lastQuery)return;lastQuery=q;if(controller)controller.abort();controller=new AbortController();statusText('Searching location…','');try{const r=await fetch((window.SMV_BACKEND_URL||'https://smv-astro-1fco.onrender.com')+'/api/geocode?q='+encodeURIComponent(q),{signal:controller.signal,headers:{Accept:'application/json'},cache:'no-store'});const data=await r.json().catch(()=>({}));if(!r.ok)throw new Error(data.error||'Location search failed');render(Array.isArray(data.results)?data.results:[]);}catch(e){if(e.name==='AbortError')return;clear();statusText(e.message||'Unable to search location.','err');}}
-    place.addEventListener('input',()=>{place.dataset.locationSelected='0';lat.value='';lon.value='';lastQuery='';clearTimeout(timer);timer=setTimeout(()=>search(place.value.trim()),500);});
-    place.addEventListener('focus',()=>{if(place.value.trim().length>=2&&list.children.length)list.classList.add('show');});
-    document.addEventListener('click',e=>{if(!parent.contains(e.target))clear();});
-  }
-  setupLocation('english');
-
-  $('generateEnglishHoroscope')?.addEventListener('click',async()=>{
-    const date=$('englishDob')?.value||'',time=$('englishTob')?.value||'',place=$('englishBirthPlace')?.value.trim()||'',lat=$('englishLat')?.value||'',lon=$('englishLon')?.value||'';
-    if(!date||!time){alert('Enter the date and time of birth.');return;}
-    if(!place||place.length<2){alert('Enter your Place of Birth and select a location suggestion.');return;}
-    if(String($('englishBirthPlace').dataset.locationSelected||'0')!=='1'||lat===''||lon===''){alert('Please select the exact location from the suggestions. Latitude and Longitude will then be filled automatically.');return;}
-    // The existing, tested Swiss-Ephemeris renderer is reused as the calculation engine.
-    // Its output is then translated into English; no second astronomical engine is introduced.
-    const copy=(a,b)=>{if($(a)&&$(b))$(b).value=$(a).value;};
-    copy('englishAstroName','tamilAstroName');copy('englishDob','tamilDob');copy('englishTob','tamilTob');copy('englishBirthPlace','tamilBirthPlace');copy('englishLat','tamilLat');copy('englishLon','tamilLon');copy('englishNakshatra','tamilNakshatra');
-    const rmap=['மேஷம்','ரிஷபம்','மிதுனம்','கடகம்','சிம்மம்','கன்னி','துலாம்','விருச்சிகம்','தனுசு','மகரம்','கும்பம்','மீனம்'];
-    const emap=['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
-    const ei=emap.indexOf($('englishRasi')?.value||'Aries');if($('tamilRasi'))$('tamilRasi').value=rmap[Math.max(0,ei)];
-    const tplace=$('tamilBirthPlace');tplace.dataset.locationSelected='1';tplace.dataset.latitude=$('englishLat').value;tplace.dataset.longitude=$('englishLon').value;
-    if($('tamilHoroscopeResult')){$('tamilHoroscopeResult').classList.add('hidden');$('tamilHoroscopeResult').innerHTML='';}
-    try{localStorage.setItem('smvLanguage','en');}catch(_e){}
-    const btn=$('generateEnglishHoroscope');if(btn){btn.disabled=true;btn.textContent='⏳ Calculating Horoscope...';}
-    try{
-      if(typeof window.__smvGenerateHoroscopeEngine!=='function')throw new Error('Horoscope engine is not ready. Please refresh the page.');
-      const generated=await window.__smvGenerateHoroscopeEngine();
-      const source=$('tamilHoroscopeResult'),target=$('englishHoroscopeResult');
-      if(source&&target&&source.innerHTML.trim()){
-        target.innerHTML=source.innerHTML;target.classList.remove('hidden');source.classList.add('hidden');source.innerHTML='';
-        // The English result is a new DOM tree, so event listeners must be rebound after copying.
-        if(typeof window.__smvApplyEnglishToHoroscope!=='function') throw new Error('English horoscope translator is not ready. Please refresh the page.');
-        if(typeof window.__smvBindHoroscopeInteractions!=='function') throw new Error('English horoscope interactions are not ready. Please refresh the page.');
-        window.__smvApplyEnglishToHoroscope(target);
-        window.__smvBindHoroscopeInteractions(target,generated||{},$('englishAstroName')?.value?.trim()||'User','en');
-        target.scrollIntoView({behavior:'smooth',block:'start'});
-      }else throw new Error('Horoscope result was not returned.');
-    }catch(e){alert(e?.message||String(e));}
-    finally{if(btn){btn.disabled=false;btn.textContent='🔮 Create Horoscope in English';}}
-  });
-  $('clearEnglishHoroscope')?.addEventListener('click',()=>{['englishAstroName','englishDob','englishTob','englishBirthPlace','englishNakshatra','englishLat','englishLon'].forEach(id=>{if($(id))$(id).value='';});if($('englishRasi'))$('englishRasi').value='Aries';if($('englishBirthPlace')){$('englishBirthPlace').dataset.locationSelected='0';$('englishBirthPlace').dataset.latitude='';$('englishBirthPlace').dataset.longitude='';}if($('englishHoroscopeResult')){$('englishHoroscopeResult').classList.add('hidden');$('englishHoroscopeResult').innerHTML='';}});
-})();
-</script>
 
 </body>
 </html>
