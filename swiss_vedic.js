@@ -29,7 +29,27 @@ function setEphe(){
   swe.set_ephe_path(ephe);
   return ephe;
 }
-function fail(result, what){ if(!result || (result.flag!==undefined && result.flag!==C.OK && result.flag!==C.SEFLG_SWIEPH && result.flag!== (C.SEFLG_SWIEPH|C.SEFLG_SIDEREAL|C.SEFLG_SPEED))) throw new Error(`${what}: ${result?.error||'Swiss Ephemeris calculation failed'}`); }
+function fail(result, what) {
+  if (!result) {
+    throw new Error(
+      `${what}: Swiss Ephemeris returned no result`
+    );
+  }
+
+  // sweph 2.10.3-7 returns calculation data in result.data.
+  // A valid calculation must have a numeric longitude.
+  if (
+    !result.data ||
+    !Array.isArray(result.data) ||
+    !Number.isFinite(Number(result.data[0]))
+  ) {
+    throw new Error(
+      `${what}: ${result.error || 'Swiss Ephemeris calculation failed'}`
+    );
+  }
+
+  return result;
+}
 function extractPoint(points, keyNames, index){
   for(const k of keyNames){ const v=points?.[k]; if(Array.isArray(v) && Number.isFinite(v[0])) return v[0]; if(Number.isFinite(v)) return v; }
   if(Array.isArray(points) && Number.isFinite(points[index])) return points[index];
@@ -56,7 +76,9 @@ function calculateSwiss({date,time,lat,lon,height=0,houseSystem}){
   if(typeof swe.set_sid_mode==='function' && C.SE_SIDM_LAHIRI!==undefined) swe.set_sid_mode(C.SE_SIDM_LAHIRI, 0, 0);
   const flags=C.SEFLG_SWIEPH|C.SEFLG_SIDEREAL|C.SEFLG_SPEED;
   const planets=[];
-  for(const [ta,id] of PLANETS){ const r=swe.calc(jdEt,id,flags); fail(r,ta); const sid=norm360(r.data[0]); const z=zodiac(sid), nk=nakshatra(sid); planets.push({name:ta,longitude:Number(sid.toFixed(8)),degree:degText(sid),rasi:z.sign,nakshatra:nk.name,pada:nk.pada,lord:nk.lord,speed:Number((r.data[3]||0).toFixed(8)),navamsa:navamsa(sid)}); }
+  for(const [ta,id] of PLANETS){ const r = swe.calc(jdEt, id, flags);
+console.log('Swiss calc:', ta, JSON.stringify(r));
+fail(r, ta); const sid=norm360(r.data[0]); const z=zodiac(sid), nk=nakshatra(sid); planets.push({name:ta,longitude:Number(sid.toFixed(8)),degree:degText(sid),rasi:z.sign,nakshatra:nk.name,pada:nk.pada,lord:nk.lord,speed:Number((r.data[3]||0).toFixed(8)),navamsa:navamsa(sid)}); }
   const rn=swe.calc(jdEt,nodeId,flags); fail(rn,'ராகு'); const rahu=norm360(rn.data[0]), ketu=norm360(rahu+180);
   for(const [name,sid] of [['ராகு',rahu],['கேது',ketu]]){ const z=zodiac(sid), nk=nakshatra(sid); planets.push({name,longitude:Number(sid.toFixed(8)),degree:degText(sid),rasi:z.sign,nakshatra:nk.name,pada:nk.pada,lord:nk.lord,speed:0,navamsa:navamsa(sid)}); }
   const hs=houseSystem || process.env.HOUSE_SYSTEM || 'P';
@@ -83,4 +105,4 @@ function calculateSwiss({date,time,lat,lon,height=0,houseSystem}){
   };
 }
 module.exports={calculateSwiss};
-  
+                     
