@@ -1,8 +1,8 @@
 {
   "name": "smv-astro-email-automation",
-  "version": "1.29.0",
+  "version": "1.30.0",
   "private": true,
-  "description": "SMV ASTRO backend with robust HH:mm/AM-PM parsing and explicit Astronomy Engine AstroTime conversion",
+  "description": "SMV ASTRO backend with robust India timezone birth-time parsing and direct Date handling for Astronomy Engine",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

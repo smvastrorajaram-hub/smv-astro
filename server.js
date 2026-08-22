@@ -323,7 +323,7 @@ app.post("/register-astrologer-profile", async (req, res) => {
 
 app.get("/", (req, res) => res.status(200).json({
   service: "SMV ASTRO Razorpay Backend",
-  version: "2026-08-22-v120-tamil-horoscope",
+  version: "2026-08-22-v130-time-debug-fix",
   status: "online",
   razorpay: "enabled",
   firebase: "enabled"
@@ -1352,9 +1352,13 @@ function calculateVedicChart({date,time,lat,lon,height=0}){
   if(!Astronomy) throw new Error("Astrology engine dependency is unavailable on the server.");
   const dt=parseBirthDateTime(date,time);
   if(!dt) throw new Error("பிறந்த தேதி / நேரம் சரியாக உள்ளிடவும். நேரம் HH:mm (உதா: 22:05) ஆக இருக்க வேண்டும்.");
-  // Astronomy Engine accepts JavaScript Date objects, but explicitly converting
-  // through MakeTime gives a stable AstroTime object for every calculation.
-  const astroTime = Astronomy.MakeTime ? Astronomy.MakeTime(dt) : dt;
+  // Astronomy Engine accepts native JavaScript Date values directly. Do not
+  // pre-convert with MakeTime here: passing the validated Date directly avoids
+  // wrapper/version differences and keeps the original UTC instant intact.
+  const astroTime = dt;
+  if (!(astroTime instanceof Date) || !Number.isFinite(astroTime.getTime())) {
+    throw new Error("Invalid birth time after timezone conversion.");
+  }
   const latitude=clampNum(lat,-90,90), longitude=clampNum(lon,-180,180); if(latitude===null||longitude===null) throw new Error("பிறந்த இடத்தின் Latitude மற்றும் Longitude அவசியம்.");
   const observer=new Astronomy.Observer(latitude,longitude,Number(height)||0), ayan=lahiriAyanamsa(dt);
   const planets=[];
@@ -1371,8 +1375,18 @@ function calculateVedicChart({date,time,lat,lon,height=0}){
   return {ok:true,engine:"Astronomy Engine + Lahiri-style sidereal conversion",timezone:"Asia/Kolkata",ayanamsa:Number(ayan.toFixed(6)),birth:{date,time,latitude,longitude},lagna:{longitude:Number(ascLon.toFixed(6)),degree:degText(ascLon),rasi:asc.sign,nakshatra:ascNak.name,pada:ascNak.pada},moonRasi:moon.rasi,moonNakshatra:moon.nakshatra,moonPada:moon.pada,planets,dashas,calculatedAt:new Date().toISOString()};
 }
 app.post("/api/horoscope/calculate", async (req,res)=>{
-  try { return res.json(calculateVedicChart(req.body||{})); }
-  catch(e){ console.error("Horoscope calculation error:",e); return res.status(400).json({error:e?.message||"ஜாதக கணக்கீடு தோல்வியடைந்தது.", engineAvailable:!!Astronomy}); }
+  try {
+    const body=req.body||{};
+    console.log("Horoscope request:", {date: body.date, time: body.time, lat: body.lat, lon: body.lon});
+    return res.json(calculateVedicChart(body));
+  } catch(e){
+    console.error("Horoscope calculation error:", e?.stack || e);
+    return res.status(400).json({
+      error: e?.message || "ஜாதக கணக்கீடு தோல்வியடைந்தது.",
+      engineAvailable:!!Astronomy,
+      received:{date:req.body?.date||null,time:req.body?.time||null,lat:req.body?.lat??null,lon:req.body?.lon??null}
+    });
+  }
 });
 
 app.post("/api/horoscope/calculate-legacy", async (req,res)=>{
