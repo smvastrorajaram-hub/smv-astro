@@ -1271,11 +1271,29 @@ const BODY_MAP = { Sun: "Sun", Moon: "Moon", Mars: "Mars", Mercury: "Mercury", J
 function norm360(x){ x%=360; return x<0?x+360:x; }
 function clampNum(v,min,max){ const n=Number(v); return Number.isFinite(n)&&n>=min&&n<=max?n:null; }
 function parseBirthDateTime(date,time){
-  if(!/^\d{4}-\d{2}-\d{2}$/.test(String(date||"")) || !/^\d{2}:\d{2}$/.test(String(time||""))) return null;
-  const [y,m,d]=String(date).split("-").map(Number); const [hh,mm]=String(time).split(":").map(Number);
-  if(hh>23||mm>59) return null;
+  const ds=String(date||"").trim();
+  const ts=String(time||"").trim();
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(ds)) return null;
+  let hh, mm;
+  // Accept the native mobile <input type="time"> value (HH:mm), plus
+  // human-entered 12-hour values such as "10:05 PM" / "10.05 PM".
+  let m=ts.match(/^(\d{1,2})[:.](\d{2})$/);
+  if(m){ hh=Number(m[1]); mm=Number(m[2]); }
+  else {
+    m=ts.match(/^(\d{1,2})[:.](\d{2})\s*(AM|PM)$/i);
+    if(!m) return null;
+    hh=Number(m[1]); mm=Number(m[2]);
+    const ap=m[3].toUpperCase();
+    if(hh<1||hh>12) return null;
+    if(ap==='AM') hh=hh===12?0:hh;
+    else hh=hh===12?12:hh+12;
+  }
+  if(!Number.isInteger(hh)||!Number.isInteger(mm)||hh<0||hh>23||mm<0||mm>59) return null;
+  const [y,mo,d]=ds.split("-").map(Number);
+  const check=new Date(Date.UTC(y,mo-1,d));
+  if(check.getUTCFullYear()!==y || check.getUTCMonth()!==mo-1 || check.getUTCDate()!==d) return null;
   // Project currently targets India; the frontend timezone is Asia/Kolkata.
-  const dt=new Date(Date.UTC(y,m-1,d,hh,mm)-330*60*1000);
+  const dt=new Date(Date.UTC(y,mo-1,d,hh,mm)-330*60*1000);
   return Number.isNaN(dt.getTime())?null:dt;
 }
 function lahiriAyanamsa(date){
