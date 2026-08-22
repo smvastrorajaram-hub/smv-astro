@@ -29,27 +29,7 @@ function setEphe(){
   swe.set_ephe_path(ephe);
   return ephe;
 }
-function fail(result, what) {
-  if (!result) {
-    throw new Error(
-      `${what}: Swiss Ephemeris returned no result`
-    );
-  }
-
-  // sweph 2.10.3-7 returns calculation data in result.data.
-  // A valid calculation must have a numeric longitude.
-  if (
-    !result.data ||
-    !Array.isArray(result.data) ||
-    !Number.isFinite(Number(result.data[0]))
-  ) {
-    throw new Error(
-      `${what}: ${result.error || 'Swiss Ephemeris calculation failed'}`
-    );
-  }
-
-  return result;
-}
+function fail(result, what){ if(!result || (result.flag!==undefined && result.flag!==C.OK && result.flag!==C.SEFLG_SWIEPH && result.flag!== (C.SEFLG_SWIEPH|C.SEFLG_SIDEREAL|C.SEFLG_SPEED))) throw new Error(`${what}: ${result?.error||'Swiss Ephemeris calculation failed'}`); }
 function extractPoint(points, keyNames, index){
   for(const k of keyNames){ const v=points?.[k]; if(Array.isArray(v) && Number.isFinite(v[0])) return v[0]; if(Number.isFinite(v)) return v; }
   if(Array.isArray(points) && Number.isFinite(points[index])) return points[index];
@@ -64,45 +44,75 @@ function houseFromCusps(lon,cusps){
   }
   return 12;
 }
+function midpointArc(a,b){
+  return norm360(a + norm360(b-a)/2);
+}
+function bhavaDetails(cusps){
+  return cusps.map((c,i)=>{
+    const prev=cusps[(i+11)%12], next=cusps[(i+1)%12];
+    const arambha=midpointArc(prev,c), antya=midpointArc(c,next);
+    return {
+      house:i+1,
+      arambhaLongitude:Number(arambha.toFixed(8)),
+      arambha:degText(arambha),
+      longitude:Number(c.toFixed(8)),
+      degree:degText(c),
+      madhya:degText(c),
+      rasi:zodiac(c).sign,
+      rasiIndex:zodiac(c).index,
+      nakshatra:nakshatra(c).name,
+      antyaLongitude:Number(antya.toFixed(8)),
+      antya:degText(antya)
+    };
+  });
+}
 
-function calculateSwiss({date,time,lat,lon,height=0,houseSystem}){
+function calculateSwiss({date,time,lat,lon,height=0,houseSystem,timezone='Asia/Kolkata',utcOffsetMinutes=330}){
   const ds=String(date||''); const ts=String(time||'');
   const m=ts.match(/^(\d{1,2}):(\d{2})$/); if(!/^\d{4}-\d{2}-\d{2}$/.test(ds)||!m) throw new Error('பிறந்த தேதி / நேரம் சரியாக உள்ளிடவும்.');
   const hh=Number(m[1]), mm=Number(m[2]); if(hh>23||mm>59) throw new Error('பிறந்த நேரம் சரியாக உள்ளிடவும்.');
   const latitude=Number(lat), longitude=Number(lon); if(!Number.isFinite(latitude)||latitude<-90||latitude>90||!Number.isFinite(longitude)||longitude<-180||longitude>180) throw new Error('Latitude / Longitude சரியாக உள்ளிடவும்.');
-  const [y,mo,d]=ds.split('-').map(Number); const utc=swe.utc_to_jd(y,mo,d,hh,mm,0,C.SE_GREG_CAL); fail(utc,'UTC/JD');
+  const [y,mo,d]=ds.split('-').map(Number);
+  const offsetMinutes=Number(utcOffsetMinutes);
+  if(!Number.isFinite(offsetMinutes) || offsetMinutes < -720 || offsetMinutes > 840) throw new Error('UTC offset சரியாக உள்ளிடவும்.');
+  const localTotal=hh*60+mm;
+  const utcTotal=localTotal-offsetMinutes;
+  const dayShift=Math.floor(utcTotal/1440);
+  const normalized=((utcTotal%1440)+1440)%1440;
+  const utcBase=new Date(Date.UTC(y,mo-1,d));
+  utcBase.setUTCDate(utcBase.getUTCDate()+dayShift);
+  const uy=utcBase.getUTCFullYear(), umo=utcBase.getUTCMonth()+1, ud=utcBase.getUTCDate();
+  const uhh=Math.floor(normalized/60), umm=normalized%60;
+  const utc=swe.utc_to_jd(uy,umo,ud,uhh,umm,0,C.SE_GREG_CAL); fail(utc,'UTC/JD');
   const [jdEt,jdUt]=utc.data;
   setEphe();
-  if(typeof swe.set_sid_mode==='function' && C.SE_SIDM_LAHIRI!==undefined) swe.set_sid_mode(C.SE_SIDM_LAHIRI, 0, 0);
+  if(typeof swe.set_sid_mode==='function' && C.SE_SIDM_LAHIRI!==undefined) swe.set_sid_mode(C.SE_SIDM_LAHIRI);
   const flags=C.SEFLG_SWIEPH|C.SEFLG_SIDEREAL|C.SEFLG_SPEED;
   const planets=[];
-  for(const [ta,id] of PLANETS){ const r = swe.calc(jdEt, id, flags);
-console.log('Swiss calc:', ta, JSON.stringify(r));
-fail(r, ta); const sid=norm360(r.data[0]); const z=zodiac(sid), nk=nakshatra(sid); planets.push({name:ta,longitude:Number(sid.toFixed(8)),degree:degText(sid),rasi:z.sign,nakshatra:nk.name,pada:nk.pada,lord:nk.lord,speed:Number((r.data[3]||0).toFixed(8)),navamsa:navamsa(sid)}); }
+  for(const [ta,id] of PLANETS){ const r=swe.calc(jdEt,id,flags); fail(r,ta); const sid=norm360(r.data[0]); const z=zodiac(sid), nk=nakshatra(sid); planets.push({name:ta,longitude:Number(sid.toFixed(8)),degree:degText(sid),rasi:z.sign,nakshatra:nk.name,pada:nk.pada,lord:nk.lord,speed:Number((r.data[3]||0).toFixed(8)),navamsa:navamsa(sid)}); }
   const rn=swe.calc(jdEt,nodeId,flags); fail(rn,'ராகு'); const rahu=norm360(rn.data[0]), ketu=norm360(rahu+180);
   for(const [name,sid] of [['ராகு',rahu],['கேது',ketu]]){ const z=zodiac(sid), nk=nakshatra(sid); planets.push({name,longitude:Number(sid.toFixed(8)),degree:degText(sid),rasi:z.sign,nakshatra:nk.name,pada:nk.pada,lord:nk.lord,speed:0,navamsa:navamsa(sid)}); }
-  const hs=houseSystem || process.env.HOUSE_SYSTEM || 'P';
+  const hs=houseSystem || process.env.HOUSE_SYSTEM || 'S';
   const hres=swe.houses_ex2(jdUt, C.SEFLG_SIDEREAL, latitude, longitude, hs); fail(hres,'பாவ/லக்னம்');
-  const hd=hres.data||{}; const rawCusps=hd.houses || hd.cusps || []; const cusps=Array.from({length:12},(_,i)=>norm360(Number(rawCusps[i] ?? rawCusps[i+1])));
+  const hd=hres.data||{}; const rawCusps=hd.houses || hd.cusps || []; const sourceCusps=Array.isArray(rawCusps)?rawCusps:(rawCusps.houses||rawCusps.cusps||[]); const cusps=Array.from({length:12},(_,i)=>{ const a=sourceCusps[i+1], b=sourceCusps[i]; const v=Number.isFinite(Number(a))?Number(a):Number(b); return norm360(v); });
   if(cusps.some(x=>!Number.isFinite(x))) throw new Error('Swiss Ephemeris returned invalid house cusps.');
   const points=hd.points||hd.ascmc||{}; const asc=extractPoint(points,['ascendant','ASC','asc'],0); const mc=extractPoint(points,['mc','MC','mediumCoeli'],1);
   const ascLon=Number.isFinite(asc)?norm360(asc):cusps[0];
   const ascZ=zodiac(ascLon), ascNk=nakshatra(ascLon);
-  const bhavas=cusps.map((c,i)=>({house:i+1,longitude:Number(c.toFixed(8)),degree:degText(c),rasi:zodiac(c).sign,nakshatra:nakshatra(c).name}));
+  const bhavas=bhavaDetails(cusps);
   const enriched=planets.map(p=>({...p,bhava:houseFromCusps(p.longitude,cusps)}));
   const d9Lagna=navamsa(ascLon);
   const moon=enriched.find(p=>p.name==='சந்திரன்');
   return {
-    ok:true, engine:'Swiss Ephemeris', engineVersion:'sweph 2.10.3-7 / Swiss Ephemeris 2.10.03', zodiac:'Sidereal', ayanamsa:'Lahiri', houseSystem:hs==='P'?'Placidus':hs, ephemerisPath:process.env.SWISSEPH_EPHE_PATH||'./ephe',
-    birth:{date,time,latitude,longitude,utc_jd:Number(jdUt.toFixed(8)),et_jd:Number(jdEt.toFixed(8))},
+    ok:true, engine:'Swiss Ephemeris', engineVersion:'sweph 2.10.3-7 / Swiss Ephemeris 2.10.03', zodiac:'Sidereal', ayanamsa:'Lahiri', houseSystem:hs==='S'?'Sripati':hs==='P'?'Placidus':hs, ephemerisPath:process.env.SWISSEPH_EPHE_PATH||'./ephe',
+    birth:{date,time,timezone,utcOffsetMinutes:offsetMinutes,utcDate:`${uy}-${String(umo).padStart(2,'0')}-${String(ud).padStart(2,'0')}`,utcTime:`${String(uhh).padStart(2,'0')}:${String(umm).padStart(2,'0')}`,latitude,longitude,utc_jd:Number(jdUt.toFixed(8)),et_jd:Number(jdEt.toFixed(8))},
     lagna:{longitude:Number(ascLon.toFixed(8)),degree:degText(ascLon),rasi:ascZ.sign,nakshatra:ascNk.name,pada:ascNk.pada,mc:Number.isFinite(mc)?Number(norm360(mc).toFixed(8)):null},
     moonRasi:moon.rasi,moonNakshatra:moon.nakshatra,moonPada:moon.pada,
     planets:enriched,
     bhavas,
     navamsa:{lagna:d9Lagna,planets:[{name:'லக்னம்',longitude:ascLon,degree:degText(ascLon),rasi:ascZ.sign,navamsa:d9Lagna,bhava:1},...enriched]},
-    swissValidation:{latitude:Number(latitude.toFixed(8)),longitude:Number(longitude.toFixed(8)),utcJd:Number(jdUt.toFixed(8)),ayanamsaMode:'Lahiri',houseSystem:hs,ascendantSource:'Swiss Ephemeris houses_ex2()',houseCuspSource:'Swiss Ephemeris houses_ex2()'},
+    swissValidation:{latitude:Number(latitude.toFixed(8)),longitude:Number(longitude.toFixed(8)),utcJd:Number(jdUt.toFixed(8)),ayanamsaMode:'Lahiri',houseSystem:hs,timezone,utcOffsetMinutes:offsetMinutes,ascendantSource:'Swiss Ephemeris houses_ex2()',houseCuspSource:'Swiss Ephemeris houses_ex2()'},
     calculatedAt:new Date().toISOString()
   };
 }
 module.exports={calculateSwiss};
-                     

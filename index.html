@@ -107,6 +107,7 @@ table.data-table{width:100%;min-width:680px;border-collapse:separate;border-spac
 .south-rasi-cell .planet-line{display:flex;align-items:center;justify-content:center;gap:4px;width:100%;padding:2px 1px;border-bottom:1px dotted #dbc9aa;font-size:clamp(10px,1.9vw,13px);font-weight:800;color:#6b2d16;line-height:1.3;white-space:nowrap}
 .south-rasi-cell .planet-line:last-child{border-bottom:0}
 .south-rasi-cell .planet-glyph{font-weight:900;color:#8a4b16}.south-rasi-cell .planet-degree{font-weight:700;color:#5f5346}
+.bhava-rasi-cell .bhava-cusp{font-size:9px;color:#8b5b1e;font-weight:800;border:1px dashed #c9a86b;border-radius:4px;padding:2px 3px;margin:2px 0;line-height:1.15}.bhava-rasi-cell .planet-line{font-size:clamp(9px,1.7vw,12px)}
 .south-rasi-cell .lagna{display:block;width:100%;padding:2px 0;border:1px solid #b78625;border-radius:5px;background:#fff0c7;color:#7b3d0e;font-size:10px}
 @media(max-width:700px){table.data-table{min-width:620px}.data-table th,.data-table td{padding:9px 8px;font-size:13px}.south-indian-chart{width:min(680px,100%)}.south-rasi-cell .planet-line{font-size:10px;gap:2px}}
 
@@ -3868,7 +3869,7 @@ window.__SMV_APP_READY=true;
     result.innerHTML=`<div class="card" style="background:linear-gradient(180deg,#fffaf0,#fff)">
       <div class="home-rule"><span>☾</span><span>தமிழ் ஜாதக கணக்கீடு</span><span>☀</span></div>
       <h2 style="text-align:center">${esc(name)}</h2>
-      <p class="small" style="text-align:center">பிறந்த தேதி: ${esc(fmtDate(d.birth.date))} · நேரம்: ${esc(d.birth.time)} · ${esc(d.birth.latitude)}, ${esc(d.birth.longitude)} · ${esc(d.timezone)}</p>
+      <p class="small" style="text-align:center">பிறந்த தேதி: ${esc(fmtDate(d.birth.date))} · நேரம்: ${esc(d.birth.time)} · ${esc(d.birth.latitude)}, ${esc(d.birth.longitude)} · ${esc(d.birth?.timezone||'Asia/Kolkata')} · UTC ${esc(d.birth?.utcDate||'')} ${esc(d.birth?.utcTime||'')}</p>
       <div class="grid" style="margin-top:15px">
         <div class="stat"><span class="small">🔱 லக்னம்</span><p><b>${esc(d.lagna.rasi)}</b> · ${esc(d.lagna.degree)}</p><p class="small">${esc(d.lagna.nakshatra)} · பாதம் ${d.lagna.pada}<br>நெடுவரை: ${Number(d.lagna.longitude).toFixed(4)}°</p></div>
         <div class="stat"><span class="small">🌙 சந்திர ராசி</span><p><b>${esc(d.moonRasi)}</b> · ${esc(d.moonNakshatra)}<br>பாதம் ${d.moonPada}</p></div>
@@ -3881,10 +3882,10 @@ window.__SMV_APP_READY=true;
       <p class="small">ஒவ்வொரு கிரகத்தின் D9 நவாம்ச ராசி, லக்ன நவாம்சம் உட்பட.</p>
       <div id="navamsaChart" class="south-indian-chart" aria-label="நவாம்ச கட்டம்"></div>
       <h3 style="margin-top:22px">🏠 பாவ கட்டம்</h3>
-      <p class="small">இங்கு பாவ ஸ்புடம் மற்றும் பாவக் கணக்கீடு <b>Swiss Ephemeris</b> house cusps அடிப்படையில் கணக்கிடப்படுகிறது. House system: <b>Placidus</b>.</p>
+      <p class="small">இங்கு பாவ ஸ்புடம் <b>Swiss Ephemeris</b> மூலம் <b>லஹிரி + ஸ்ரீபதி (Sripati)</b> முறையில் கணக்கிடப்படுகிறது. பிறந்த நேரம் India Standard Time (UTC+05:30) ஆக இருந்தால் சரியாக UTC-க்கு மாற்றப்பட்ட பிறகே house cusps கணக்கிடப்படும். South Indian Bhava Chalit-ல் ராசி பெட்டிகள் நிலையாக இருக்கும்.</p>
       <div id="bhavaChart" class="south-indian-chart" aria-label="பாவ கட்டம்"></div>
       <h3 style="margin-top:22px">📐 பாவ ஸ்புடம்</h3>
-      <div class="data-table-wrap"><table class="data-table bhava-table"><thead><tr><th>பாவம்</th><th>ஸ்புடம்</th><th>ராசி</th><th>கிரகங்கள்</th></tr></thead><tbody>${(d.bhavas||[]).map(b=>{const ps=(d.planets||[]).filter(p=>p.bhava===b.house).map(p=>p.name).join(', ');return `<tr><td><b>${b.house}</b></td><td>${esc(b.degree)}</td><td>${esc(b.rasi)}</td><td>${esc(ps||'—')}</td></tr>`}).join('')}</tbody></table></div>
+      <div class="data-table-wrap"><table class="data-table bhava-table"><thead><tr><th>பாவம்</th><th>ஆரம்பம்</th><th>மத்தியம் / ஸ்புடம்</th><th>முடிவு</th><th>ஸ்புட ராசி</th><th>கிரகங்கள்</th></tr></thead><tbody>${(d.bhavas||[]).map(b=>{const ps=(d.planets||[]).filter(p=>p.bhava===b.house).map(p=>p.name).join(', ');return `<tr><td><b>${b.house}</b></td><td>${esc(b.arambha||'—')}</td><td><b>${esc(b.madhya||b.degree||'—')}</b></td><td>${esc(b.antya||'—')}</td><td>${esc(b.rasi||'—')}</td><td>${esc(ps||'—')}</td></tr>`}).join('')}</tbody></table></div>
       <h3 style="margin-top:22px">🪷 நவாம்ச நிலைகள்</h3>
       <div class="data-table-wrap"><table class="data-table navamsa-table"><thead><tr><th>கிரகம்</th><th>D1 ராசி</th><th>D9 நவாம்ச ராசி</th><th>நவாம்ச பாதம்</th><th>பாவம்</th></tr></thead><tbody>${(d.planets||[]).map(p=>`<tr><td><b>${esc(p.name)}</b></td><td>${esc(p.rasi)}</td><td>${esc(p.navamsa?.rasi||'—')}</td><td>${p.navamsa?.pada||'—'}</td><td>${p.bhava||'—'}</td></tr>`).join('')}</tbody></table></div>
       <h3 style="margin-top:22px">📍 பிறப்பு விவரங்கள்</h3>
@@ -3936,18 +3937,20 @@ window.__SMV_APP_READY=true;
     }
     const bhChart=$('bhavaChart');
     if(bhChart){
-      // Bhava chart is house-based, not sign-based. Equal-house cusps may fall
-      // inside signs, so render the 12 houses in numerical order with cusp data.
-      const bhavas=d.bhavas||[]; const byHouse=Array.from({length:12},()=>[]);
-      (d.planets||[]).forEach(p=>{const h=Number(p.bhava); if(h>=1&&h<=12) byHouse[h-1].push(p);});
-      // South-Indian-style 4x4 ring: 12 houses around a 2x2 center.
-      const bhOrder=[0,1,2,3,11,null,null,4,10,null,null,5,9,8,7,6];
+      // V139: South Indian Bhava Chalit keeps Rasi boxes fixed.
+      // Planets stay in their actual sidereal Rasi; Bhava number/cusp is overlaid.
+      const bhavas=d.bhavas||[];
+      const bySign=Array.from({length:12},()=>[]);
+      (d.planets||[]).forEach(p=>{const si=rasiIndex(p.rasi); if(si>=0) bySign[si].push(p);});
+      const cuspsBySign=Array.from({length:12},()=>[]);
+      bhavas.forEach(b=>{const si=Number.isFinite(b.rasiIndex)?b.rasiIndex:rasiIndex(b.rasi); if(si>=0) cuspsBySign[si].push(b);});
+      const bhOrder=[11,0,1,2,10,null,null,3,9,null,null,4,8,7,6,5];
       let h='';
-      bhOrder.forEach((idx,pos)=>{
-        if(idx===null){ if(pos===5) h+=`<div class="south-chart-center">பாவ<br>ஸ்புடம்</div>`; return; }
-        const b=bhavas[idx]||{};
-        const ps=byHouse[idx].map(p=>`<div class="planet-line"><span class="planet-glyph">${esc(p.name)}</span><span class="planet-degree">${esc(p.degree||'')}</span></div>`).join('');
-        h+=`<div class="south-rasi-cell"><div class="sign">${esc(b.rasi||'—')}</div><div class="house">${idx+1}-ம் பாவம்</div>${idx===0?'<div class="lagna">🔱 லக்ன பாவம்</div>':''}<div class="small">ஸ்புடம்: ${esc(b.degree||'—')}</div>${ps||'<div class="small">கிரகம் இல்லை</div>'}</div>`;
+      bhOrder.forEach((si,pos)=>{
+        if(si===null){ if(pos===5) h+=`<div class="south-chart-center">பாவ<br>சுட்டி</div>`; return; }
+        const ps=bySign[si].map(p=>`<div class="planet-line"><span class="planet-glyph">${esc(p.name)}</span><span class="planet-degree">${esc(p.degree||'')} · பா.${p.bhava||'—'}</span></div>`).join('');
+        const cs=cuspsBySign[si].map(b=>`<div class="bhava-cusp">பா.${b.house} ஸ்புடம் ${esc(b.degree||'')}</div>`).join('');
+        h+=`<div class="south-rasi-cell bhava-rasi-cell"><div class="sign">${signIcon[si]} ${esc(rasiList[si])}</div>${cs}${ps||'<div class="small">—</div>'}</div>`;
       });
       bhChart.innerHTML=h;
     }
@@ -3998,7 +4001,7 @@ window.__SMV_APP_READY=true;
       }
       const normalizedTime=normalizeHoroscopeTime(time);
       if(!normalizedTime) throw new Error('பிறந்த நேரம் சரியாக உள்ளிடவும். உதாரணம்: 22:05 (10:05 PM).');
-      const r=await fetch(BACKEND_URL+'/api/horoscope/calculate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({date,time:normalizedTime,lat:Number(lat),lon:Number(lon),height:0})});
+      const r=await fetch(BACKEND_URL+'/api/horoscope/calculate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({date,time:normalizedTime,lat:Number(lat),lon:Number(lon),height:0,timezone:'Asia/Kolkata',utcOffsetMinutes:330,houseSystem:'S'})});
       const d=await r.json().catch(()=>({})); if(!r.ok) throw new Error(d.error||`Calculation failed (HTTP ${r.status})`); render(d);
     }catch(e){alert(e?.message||String(e));}
     finally{if(btn){btn.disabled=false;btn.textContent='🔮 தமிழ் ஜாதகம் உருவாக்குக';}}

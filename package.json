@@ -1,8 +1,8 @@
 {
   "name": "smv-astro-email-automation",
-  "version": "1.38.0",
+  "version": "1.39.0",
   "private": true,
-  "description": "SMV ASTRO with Swiss Ephemeris sidereal Vedic chart, real house cusps, D9 Navamsa, Bhava Sphuta and interactive Vimshottari Dasha",
+  "description": "SMV ASTRO with Swiss Ephemeris sidereal Vedic chart, Sripati Bhava Sphuta, D9 Navamsa, South Indian Bhava Chalit and interactive Vimshottari Dasha",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

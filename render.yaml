@@ -13,4 +13,4 @@ services:
       - key: SWISSEPH_EPHE_PATH
         value: ./ephe
       - key: HOUSE_SYSTEM
-        value: P
+        value: S
