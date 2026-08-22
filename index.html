@@ -1358,7 +1358,7 @@ try{
   firebaseInitError=initError;
   console.error("SMV ASTRO Firebase initialization failed",initError);
 }
-const RAZORPAY_BACKEND_URL="https://smv-astro-razorpay-webhook.onrender.com";
+const RAZORPAY_BACKEND_URL="https://smv-astro-1fco.onrender.com";
 // Single backend URL used by all protected API calls, including astrologer answer submission.
 // Keep this in the main Firebase module so it is available to the answer-submit handler.
 const BACKEND=RAZORPAY_BACKEND_URL;
@@ -3824,7 +3824,7 @@ window.__SMV_APP_READY=true;
 <script>
 /* Tamil Horoscope Generator - V121: server-side astronomical calculation engine. */
 (function(){
-  const BACKEND_URL='https://smv-astro-razorpay-webhook.onrender.com';
+  const BACKEND_URL='https://smv-astro-1fco.onrender.com';
   const $=id=>document.getElementById(id);
   const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const rasiList=['மேஷம்','ரிஷபம்','மிதுனம்','கடகம்','சிம்மம்','கன்னி','துலாம்','விருச்சிகம்','தனுசு','மகரம்','கும்பம்','மீனம்'];
@@ -3880,7 +3880,7 @@ window.__SMV_APP_READY=true;
 
 <script>
 (function(){
-  const BACKEND_URL = "https://smv-astro-razorpay-webhook.onrender.com";
+  const BACKEND_URL = "https://smv-astro-1fco.onrender.com";
   const form = document.getElementById("contactForm");
   if(!form) return;
   const btn = document.getElementById("contactSubmit");
@@ -3921,7 +3921,7 @@ window.__SMV_APP_READY=true;
 </script>
 <script type="module">
 (function(){
-  const BACKEND="https://smv-astro-razorpay-webhook.onrender.com";
+  const BACKEND="https://smv-astro-1fco.onrender.com";
   const FBCONFIG={apiKey:"AIzaSyCKXyfZ9sjGmej7ygxHpzHNcNysMXHuvSs",authDomain:"smv-astro.firebaseapp.com",projectId:"smv-astro",storageBucket:"smv-astro.firebasestorage.app",messagingSenderId:"299081899217",appId:"1:299081899217:web:8d558df08e86037ea539f0"};
   let db=null,auth=null;
   const $=id=>document.getElementById(id);
