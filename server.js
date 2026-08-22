@@ -1510,19 +1510,21 @@ app.post("/api/horoscope/ai-future", express.json({ limit: "60kb" }), async (req
     }
 
     const chart = req.body?.chart;
+    const language = String(req.body?.language || "en").toLowerCase() === "ta" ? "ta" : "en";
     if (!chart || typeof chart !== "object") return res.status(400).json({ error: "Chart data is required." });
 
     // IMPORTANT: Gemini is an interpretation layer only. It must not recalculate
     // astronomy or replace Swiss Ephemeris / Bhava Sphuta values.
     const prompt = `
-You are the Tamil-language interpretation assistant for SMV ASTRO.
+You are the ${language === "ta" ? "Tamil" : "English"}-language interpretation assistant for SMV ASTRO.
 Generate a traditional Vedic astrology interpretation using ONLY the verified chart data supplied below.
 Do NOT recalculate planetary positions, ascendant, houses, bhava sphuta, or dasha dates. Do not invent missing data.
 Clearly distinguish traditional astrological interpretation from factual certainty. Never promise or guarantee future events.
-Write in clear, respectful Tamil. Avoid medical, legal, financial or other high-stakes instructions; where such topics arise, advise the user to consult a qualified professional.
+Write in clear, respectful ${language === "ta" ? "Tamil" : "English"} only. Do not mix languages.
+Avoid medical, legal, financial or other high-stakes instructions; where such topics arise, advise the user to consult a qualified professional.
 
 Return these sections with concise headings:
-1. பொதுவான வாழ்க்கை நோக்கு
+${language === "ta" ? `1. பொதுவான வாழ்க்கை நோக்கு
 2. தொழில் / கல்வி
 3. பணநிலை
 4. திருமணம் / உறவுகள்
@@ -1530,7 +1532,15 @@ Return these sections with concise headings:
 6. முக்கிய வாய்ப்புகள்
 7. கவனிக்க வேண்டிய காலங்கள்
 8. பாரம்பரிய பரிகார வழிகாட்டல் (optional, non-coercive)
-9. முக்கிய குறிப்பு — இது பாரம்பரிய ஜோதிட விளக்கம்; உறுதியான எதிர்கால உத்தரவாதம் அல்ல.
+9. முக்கிய குறிப்பு — இது பாரம்பரிய ஜோதிட விளக்கம்; உறுதியான எதிர்கால உத்தரவாதம் அல்ல.` : `1. General Life Outlook
+2. Career / Education
+3. Finance
+4. Marriage / Relationships
+5. Family
+6. Important Opportunities
+7. Important Periods
+8. Traditional Guidance (optional, non-coercive)
+9. Important Note — this is a traditional astrology interpretation and not a guarantee of future events.`}
 
 Verified chart data:
 ${JSON.stringify(chart, null, 2)}
@@ -1545,7 +1555,7 @@ ${JSON.stringify(chart, null, 2)}
           method: "POST",
           headers: { "x-goog-api-key": GEMINI_API_KEY, "Content-Type": "application/json" },
           body: JSON.stringify({
-            system_instruction: { parts: [{ text: "You are a careful Tamil Vedic astrology interpretation assistant. Use only supplied verified chart data and never claim certainty." }] },
+            system_instruction: { parts: [{ text: `You are a careful ${language === "ta" ? "Tamil" : "English"} Vedic astrology interpretation assistant. Use only supplied verified chart data, respond only in ${language === "ta" ? "Tamil" : "English"}, and never claim certainty.` }] },
             contents: [{ role: "user", parts: [{ text: prompt }] }],
             generationConfig: { maxOutputTokens: 2800, thinkingConfig: { thinkingLevel: "low" } }
           }),
