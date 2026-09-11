@@ -1,0 +1,517 @@
+/* Readable, consistent final interface. Calculation layouts are preserved. */
+[hidden],#smvInstallAppSection[hidden]{display:none!important}
+html[lang="en"] #tamil-horoscope,html[lang="ta"] #english-horoscope{display:none!important}
+@media(display-mode:standalone){#smvInstallAppSection{display:none!important}}
+@media(display-mode:fullscreen){#smvInstallAppSection{display:none!important}}
+html body{background:#fff!important;color:#242424!important;line-height:1.6}
+html body :is(#admin,#dashboard){font-size:16px!important;letter-spacing:normal!important}
+html body :is(#admin,#dashboard) .card{background:#fff!important;border:1px solid #e4e4e4!important;border-radius:10px!important;box-shadow:none!important;padding:18px!important;margin-bottom:16px!important}
+html body :is(#admin,#dashboard) :is(p,div,label,td,textarea,input,select){letter-spacing:normal!important;line-height:1.6!important}
+html body :is(#admin,#dashboard) :is(h2,h3){color:#a31920!important;letter-spacing:normal!important;font-weight:700!important;line-height:1.5!important;text-transform:none!important}
+html body :is(#admin,#dashboard) .small{font-size:14px!important;line-height:1.6!important}
+html body :is(#admin,#dashboard) :is(button,input,select,textarea){font-size:16px!important;min-height:44px!important;border-radius:6px!important;text-transform:none!important;letter-spacing:normal!important}
+html body :is(#admin,#dashboard) button{background:#a31920!important;color:#fff!important;border:1px solid #a31920!important;box-shadow:none!important;font-weight:600!important;white-space:normal!important}
+html body :is(#admin,#dashboard) button:disabled{opacity:.6!important;cursor:wait}
+html body :is(#admin,#dashboard) input,html body :is(#admin,#dashboard) select,html body :is(#admin,#dashboard) textarea{background:#fff!important;color:#242424!important;border:1px solid #aaa!important;padding:10px!important;width:100%;box-sizing:border-box}
+html body :is(#admin,#dashboard) label{display:block;font-size:14px!important}
+.smv-workflow-card{scroll-margin-top:100px;overflow-wrap:anywhere}
+.smv-workflow-card .action-row{display:flex!important;flex-wrap:wrap!important;gap:10px!important;align-items:end!important;margin:12px 0!important}
+.smv-workflow-card .action-row>label{flex:1 1 180px}
+.smv-workflow-card details{margin:12px 0}
+.smv-workflow-card summary{cursor:pointer;font-weight:600;min-height:44px;padding:8px 0}
+.smv-workflow-card [data-workflow="reject-question"],.smv-workflow-card [data-workflow="reject-answer"]{border-style:dashed!important}
+.smv-admin-nav{display:flex!important;gap:8px!important;flex-wrap:wrap!important;justify-content:flex-start!important;padding:12px 0!important;margin-bottom:10px!important;background:#fff!important}
+.smv-refresh{margin:8px 0 16px!important}
+#adminPendingQuestions,#adminAnswers,#adminRefunds{scroll-margin-top:100px}
+html body .smv-install-app-card{background:#fff!important;box-shadow:none!important;border:1px solid #ddd!important}
+@media(max-width:650px){html body :is(#admin,#dashboard) .card{padding:14px!important}.smv-workflow-card .action-row>button{flex:0 0 auto}html body :is(#admin,#dashboard){margin-top:20px!important}}
+
+/* Admin shortcuts have their own layout; header nav rules must not size them. */
+html body #admin div.smv-admin-nav{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:12px!important;width:100%!important;max-width:100%!important;box-sizing:border-box!important;margin:0 0 16px!important;padding:12px 0!important;position:static!important;transform:none!important}
+html body #admin div.smv-admin-nav button.smv-admin-jump{display:block!important;position:static!important;width:100%!important;min-width:0!important;max-width:100%!important;height:auto!important;min-height:52px!important;max-height:none!important;margin:0!important;padding:12px 16px!important;box-sizing:border-box!important;font-size:16px!important;line-height:1.65!important;white-space:normal!important;word-break:normal!important;overflow-wrap:anywhere!important;overflow:visible!important;text-indent:0!important;letter-spacing:normal!important;transform:none!important;font-weight:600!important;text-align:center!important;flex:none!important}
+@media(max-width:600px){html body #admin div.smv-admin-nav{grid-template-columns:1fr!important}}
+
+/* Flex basis was becoming a 180px height when the existing mobile row changed to a column. */
+html body #admin .smv-workflow-card .action-row{display:flex!important;flex-direction:row!important;flex-wrap:wrap!important;align-items:center!important;gap:8px!important}
+html body #admin .smv-workflow-card .action-row>label{flex:1 1 200px!important;min-width:0!important;width:auto!important}
+html body #admin .smv-workflow-card button{flex:0 0 auto!important;height:auto!important;min-height:44px!important;max-height:none!important;min-width:0!important;width:auto!important;max-width:100%!important;padding:9px 12px!important;font-size:14px!important;line-height:1.5!important;white-space:normal!important;box-sizing:border-box!important;aspect-ratio:auto!important;margin:4px 0!important}
+@media(max-width:650px){html body #admin .smv-workflow-card .action-row{flex-direction:column!important;align-items:stretch!important}html body #admin .smv-workflow-card .action-row>label{flex:0 0 auto!important;width:100%!important}html body #admin .smv-workflow-card button{align-self:flex-start!important}html body #admin div.smv-admin-nav button.smv-admin-jump{min-height:44px!important;padding:8px 12px!important;font-size:14px!important}}
+
+/* Bilingual header switch: text links only; existing header buttons remain unchanged. */
+.smv-language-switch{display:inline-flex;align-items:center;gap:5px;white-space:nowrap;font-weight:700;font-size:.92rem}.smv-language-switch a{padding:2px 3px!important;border:0!important;background:transparent!important;box-shadow:none!important;text-decoration:none}.smv-language-switch a[aria-current="page"]{text-decoration:underline;text-underline-offset:3px}
+
+/* ================================================================
+   SMV BILINGUAL HEADER FIT FIX — 2026-09-11
+   Header-only layout adjustment. No application/workflow logic changed.
+   ================================================================ */
+
+/* Language selector: two independent compact buttons on every screen. */
+html body header .smv-language-switch{
+  display:inline-grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  align-items:center!important;
+  gap:6px!important;
+  width:auto!important;
+  min-width:150px!important;
+  max-width:220px!important;
+  margin:0!important;
+  padding:0!important;
+  white-space:nowrap!important;
+  box-sizing:border-box!important;
+}
+html body header .smv-language-switch > span[aria-hidden="true"]{
+  display:none!important;
+}
+html body header .smv-language-switch > a{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:100%!important;
+  min-width:0!important;
+  min-height:38px!important;
+  height:auto!important;
+  margin:0!important;
+  padding:7px 9px!important;
+  box-sizing:border-box!important;
+  border:1.5px solid #f3c93b!important;
+  border-radius:8px!important;
+  background:transparent!important;
+  color:inherit!important;
+  box-shadow:none!important;
+  font-size:12px!important;
+  line-height:1.2!important;
+  font-weight:700!important;
+  text-align:center!important;
+  text-decoration:none!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+  transform:none!important;
+}
+html body header .smv-language-switch > a[aria-current="page"]{
+  background:rgba(243,201,59,.14)!important;
+  text-decoration:underline!important;
+  text-underline-offset:3px!important;
+}
+
+/* Mobile: compact, balanced 4-column header. This only sizes header controls. */
+@media (max-width:768px){
+  html body header .nav{
+    width:100%!important;
+    max-width:100%!important;
+    box-sizing:border-box!important;
+    padding-left:10px!important;
+    padding-right:10px!important;
+    overflow:hidden!important;
+  }
+  html body header .nav nav{
+    display:grid!important;
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    grid-auto-flow:row!important;
+    align-items:stretch!important;
+    justify-content:stretch!important;
+    gap:7px!important;
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    margin:8px 0 0!important;
+    padding:0!important;
+    box-sizing:border-box!important;
+    overflow:visible!important;
+  }
+  html body header .nav nav > a:not(.hidden),
+  html body header .nav nav > button:not(.hidden),
+  html body header .nav nav > .btn:not(.hidden){
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    min-height:38px!important;
+    height:auto!important;
+    margin:0!important;
+    padding:6px 5px!important;
+    box-sizing:border-box!important;
+    border-radius:8px!important;
+    font-size:11px!important;
+    line-height:1.2!important;
+    text-align:center!important;
+    white-space:normal!important;
+    overflow-wrap:anywhere!important;
+    transform:none!important;
+  }
+  html body header .nav nav > .smv-language-switch{
+    grid-column:span 2!important;
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:none!important;
+    gap:7px!important;
+    margin:0!important;
+  }
+  html body header .nav nav > .smv-language-switch > a{
+    min-height:38px!important;
+    padding:6px 4px!important;
+    border-radius:8px!important;
+    font-size:11px!important;
+  }
+}
+
+/* Very narrow phones: keep the same two-row concept without horizontal clipping. */
+@media (max-width:380px){
+  html body header .nav nav{
+    gap:5px!important;
+  }
+  html body header .nav nav > a:not(.hidden),
+  html body header .nav nav > button:not(.hidden),
+  html body header .nav nav > .btn:not(.hidden),
+  html body header .nav nav > .smv-language-switch > a{
+    min-height:36px!important;
+    padding:5px 3px!important;
+    font-size:10px!important;
+  }
+}
+
+/* Desktop/tablet: preserve the existing header arrangement; only make the
+   bilingual selector two neat standalone buttons. */
+@media (min-width:769px){
+  html body header .smv-language-switch{
+    flex:0 0 auto!important;
+    min-width:156px!important;
+  }
+  html body header .smv-language-switch > a{
+    min-height:36px!important;
+    padding:7px 10px!important;
+    font-size:12px!important;
+  }
+}
+
+
+/* ================================================================
+   SMV BILINGUAL LANGUAGE ROW + HEADER ALIGNMENT FINAL — 2026-09-11
+   Layout only. Language selector is OUTSIDE the navigation button grid.
+   ================================================================ */
+html body header .smv-language-row{
+  width:100%!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  margin:0!important;
+  padding:0!important;
+  box-sizing:border-box!important;
+}
+html body header .smv-language-row .smv-language-switch{
+  display:inline-flex!important;
+  width:auto!important;
+  min-width:0!important;
+  max-width:none!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:6px!important;
+  margin:0!important;
+  padding:3px!important;
+  border:1px solid rgba(243,201,59,.65)!important;
+  border-radius:10px!important;
+  background:rgba(92,8,15,.28)!important;
+  box-sizing:border-box!important;
+  white-space:nowrap!important;
+}
+html body header .smv-language-row .smv-language-switch > span[aria-hidden="true"]{
+  display:none!important;
+}
+html body header .smv-language-row .smv-language-switch > a{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:auto!important;
+  min-width:72px!important;
+  max-width:none!important;
+  height:30px!important;
+  min-height:30px!important;
+  max-height:30px!important;
+  padding:0 12px!important;
+  margin:0!important;
+  border:1px solid #f3c93b!important;
+  border-radius:7px!important;
+  background:transparent!important;
+  color:inherit!important;
+  box-shadow:none!important;
+  box-sizing:border-box!important;
+  font-size:11px!important;
+  line-height:1!important;
+  font-weight:800!important;
+  text-decoration:none!important;
+  white-space:nowrap!important;
+  transform:none!important;
+}
+html body header .smv-language-row .smv-language-switch > a[aria-current="page"]{
+  background:rgba(243,201,59,.18)!important;
+  text-decoration:underline!important;
+  text-underline-offset:3px!important;
+}
+
+/* Main navigation no longer includes the language selector. */
+@media (max-width:767px){
+  html body header .nav{
+    width:100%!important;
+    max-width:100vw!important;
+    padding:10px 8px 9px!important;
+    gap:8px!important;
+    overflow:hidden!important;
+    box-sizing:border-box!important;
+  }
+  html body header .smv-language-row{
+    justify-content:flex-end!important;
+    padding:0 3px!important;
+  }
+  html body header .smv-language-row .smv-language-switch{
+    gap:4px!important;
+    padding:2px!important;
+    border-radius:9px!important;
+  }
+  html body header .smv-language-row .smv-language-switch > a{
+    min-width:66px!important;
+    height:28px!important;
+    min-height:28px!important;
+    max-height:28px!important;
+    padding:0 9px!important;
+    font-size:10.5px!important;
+    border-radius:6px!important;
+  }
+  html body header .nav nav{
+    width:100%!important;
+    max-width:100%!important;
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    grid-auto-flow:row!important;
+    grid-auto-rows:40px!important;
+    gap:6px!important;
+    padding:0 2px!important;
+    margin:0!important;
+    box-sizing:border-box!important;
+    justify-items:stretch!important;
+    align-items:stretch!important;
+    overflow:visible!important;
+  }
+  html body header .nav nav > a[href="#home"],
+  html body header .nav nav > #horoscopeNav,
+  html body header .nav nav > #contentNav,
+  html body header .nav nav > #contactNav,
+  html body header .nav nav > #dashLink,
+  html body header .nav nav > #authBtn,
+  html body header .nav nav > #registerNav{
+    grid-column:auto!important;
+    grid-row:auto!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:none!important;
+    height:40px!important;
+    min-height:40px!important;
+    max-height:40px!important;
+    padding:0 5px!important;
+    margin:0!important;
+    border-radius:8px!important;
+    box-sizing:border-box!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    font-size:11px!important;
+    line-height:1.05!important;
+    font-weight:900!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+  }
+  html body header .nav nav > #adminLink{display:none!important;}
+  /* When Dashboard is visible there are 7 controls; center the final Register button. */
+  html body header .nav nav:has(#dashLink:not(.hidden)) > #registerNav{
+    grid-column:2!important;
+  }
+}
+
+@media (max-width:360px){
+  html body header .nav nav{
+    grid-auto-rows:38px!important;
+    gap:5px!important;
+  }
+  html body header .nav nav > a[href="#home"],
+  html body header .nav nav > #horoscopeNav,
+  html body header .nav nav > #contentNav,
+  html body header .nav nav > #contactNav,
+  html body header .nav nav > #dashLink,
+  html body header .nav nav > #authBtn,
+  html body header .nav nav > #registerNav{
+    height:38px!important;
+    min-height:38px!important;
+    max-height:38px!important;
+    font-size:10px!important;
+    padding:0 3px!important;
+  }
+  html body header .smv-language-row .smv-language-switch > a{
+    min-width:62px!important;
+    padding:0 7px!important;
+    font-size:10px!important;
+  }
+}
+
+/* Desktop/tablet: language selector remains its own separate row, right aligned;
+   normal navigation controls stay in their original row. */
+@media (min-width:768px){
+  html body header .smv-language-row{
+    justify-content:flex-end!important;
+    padding:0 6px!important;
+  }
+  html body header .smv-language-row .smv-language-switch > a{
+    min-width:78px!important;
+    height:32px!important;
+    min-height:32px!important;
+    max-height:32px!important;
+    font-size:11.5px!important;
+  }
+  html body header .nav nav > .smv-language-switch{
+    display:none!important;
+  }
+}
+
+/* ================================================================
+   SMV MOBILE HEADER 4 + 3 CENTERED BUTTONS — 2026-09-11
+   Mobile main-navigation sizing/alignment only.
+   Language selector and desktop layout intentionally untouched.
+   ================================================================ */
+@media (max-width:767px){
+  html body header .nav nav{
+    display:flex!important;
+    flex-flow:row wrap!important;
+    justify-content:center!important;
+    align-items:center!important;
+    gap:6px!important;
+    width:100%!important;
+    max-width:100%!important;
+    padding:0 2px!important;
+    margin:0!important;
+    box-sizing:border-box!important;
+  }
+
+  html body header .nav nav > a[href="#home"],
+  html body header .nav nav > #horoscopeNav,
+  html body header .nav nav > #contentNav,
+  html body header .nav nav > #contactNav,
+  html body header .nav nav > #dashLink,
+  html body header .nav nav > #authBtn,
+  html body header .nav nav > #registerNav{
+    flex:0 0 calc((100% - 18px) / 4)!important;
+    width:calc((100% - 18px) / 4)!important;
+    min-width:0!important;
+    max-width:calc((100% - 18px) / 4)!important;
+    height:36px!important;
+    min-height:36px!important;
+    max-height:36px!important;
+    padding:0 4px!important;
+    margin:0!important;
+    box-sizing:border-box!important;
+    border-radius:7px!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    font-size:10.5px!important;
+    line-height:1.05!important;
+    font-weight:900!important;
+    text-align:center!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+    grid-column:auto!important;
+    grid-row:auto!important;
+  }
+
+  html body header .nav nav > #adminLink{
+    display:none!important;
+  }
+
+  /* Cancel the earlier special Register placement; flexbox centers each row. */
+  html body header .nav nav:has(#dashLink:not(.hidden)) > #registerNav{
+    grid-column:auto!important;
+  }
+}
+
+@media (max-width:360px){
+  html body header .nav nav{
+    gap:5px!important;
+  }
+  html body header .nav nav > a[href="#home"],
+  html body header .nav nav > #horoscopeNav,
+  html body header .nav nav > #contentNav,
+  html body header .nav nav > #contactNav,
+  html body header .nav nav > #dashLink,
+  html body header .nav nav > #authBtn,
+  html body header .nav nav > #registerNav{
+    flex-basis:calc((100% - 15px) / 4)!important;
+    width:calc((100% - 15px) / 4)!important;
+    max-width:calc((100% - 15px) / 4)!important;
+    height:34px!important;
+    min-height:34px!important;
+    max-height:34px!important;
+    padding:0 2px!important;
+    font-size:9.5px!important;
+  }
+}
+
+
+/* ================================================================
+   SMV MOBILE HEADER EQUAL BUTTON + AUTH LABEL FIX — 2026-09-11
+   Scope: mobile main navigation only. Language selector / desktop untouched.
+   ================================================================ */
+@media (max-width:767px){
+  html body header .nav nav{
+    display:flex!important;
+    flex-flow:row wrap!important;
+    justify-content:center!important;
+    align-items:center!important;
+    gap:6px!important;
+  }
+  html body header .nav nav > a[href="#home"],
+  html body header .nav nav > #horoscopeNav,
+  html body header .nav nav > #contentNav,
+  html body header .nav nav > #contactNav,
+  html body header .nav nav > #dashLink,
+  html body header .nav nav > #authBtn,
+  html body header .nav nav > #registerNav{
+    flex:0 0 calc((100% - 18px) / 4)!important;
+    width:calc((100% - 18px) / 4)!important;
+    min-width:0!important;
+    max-width:calc((100% - 18px) / 4)!important;
+    height:36px!important;
+    min-height:36px!important;
+    max-height:36px!important;
+    padding:0 3px!important;
+    margin:0!important;
+    border-radius:7px!important;
+    box-sizing:border-box!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    font-size:10.5px!important;
+    line-height:1!important;
+    font-weight:900!important;
+    text-align:center!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+  }
+}
+@media (max-width:360px){
+  html body header .nav nav > a[href="#home"],
+  html body header .nav nav > #horoscopeNav,
+  html body header .nav nav > #contentNav,
+  html body header .nav nav > #contactNav,
+  html body header .nav nav > #dashLink,
+  html body header .nav nav > #authBtn,
+  html body header .nav nav > #registerNav{
+    height:34px!important;
+    min-height:34px!important;
+    max-height:34px!important;
+    font-size:9.5px!important;
+  }
+}
