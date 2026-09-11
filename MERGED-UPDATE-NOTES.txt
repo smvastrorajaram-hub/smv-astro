@@ -1,0 +1,15 @@
+SMV ASTRO - 2026-09-11 workflow update
+
+Added:
+- Admin ALLOW ON/OFF question/answer approval control
+- Open Questions for all approved astrologers when ALLOW is ON
+- Transaction-safe first-claim ownership
+- Direct customer answer delivery when ALLOW is ON
+- Astrologer edit/resubmit until customer views the direct answer
+- English answer section forced refresh after submission
+- Existing customer/astrologer role isolation flow retained
+
+Merged package:
+- English: /index.html
+- Tamil: /ta/index.html
+- Header Tamil / English switch uses simple text links and does not replace existing buttons.
