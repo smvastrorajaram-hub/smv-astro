@@ -21,7 +21,7 @@ try{
   firebaseInitError=initError;
   console.error("SMV ASTRO Firebase initialization failed",initError);
 }
-const RAZORPAY_BACKEND_URL="https://smvastro-tamil.onrender.com";
+const RAZORPAY_BACKEND_URL="https://smv-astro-service.onrender.com";
 // Single backend URL used by all protected API calls, including astrologer answer submission.
 // Keep this in the main Firebase module so it is available to the answer-submit handler.
 const BACKEND=RAZORPAY_BACKEND_URL; window.SMV_BACKEND_URL=RAZORPAY_BACKEND_URL;
@@ -975,7 +975,7 @@ async function submitAuth(mode){
     // created Auth account behind.
     profileResponse=await renderApi("/register-customer-profile",{
       method:"POST",
-      body:JSON.stringify({name,phone})
+      body:JSON.stringify({name,phone,language:"ta"})
     },cred.user);
     if(!profileResponse?.ok) throw new Error(profileResponse?.error||"Customer profile setup failed.");
     try{await withTimeout(sendEmailVerification(cred.user),15000);}catch(ve){console.warn("Verification email could not be sent immediately",ve);}
@@ -1335,7 +1335,7 @@ $("astroRegistrationForm")?.addEventListener("submit",async e=>{
   try {
     profileResponse=await withTimeout(renderApi("/register-astrologer-profile",{
       method:"POST",
-      body:JSON.stringify({name,mobile,specialization,experience,bio,bankName,accountName,accountNumber,ifsc,upi,photoData})
+      body:JSON.stringify({name,mobile,specialization,experience,bio,bankName,accountName,accountNumber,ifsc,upi,photoData,language:"ta"})
     }),30000);
   } catch(networkErr) {
     const raw=String(networkErr?.message||networkErr||"");
