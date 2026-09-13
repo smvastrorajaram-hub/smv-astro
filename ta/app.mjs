@@ -942,7 +942,9 @@ async function submitAuth(mode){
     return;
   }
   const name=$("name").value.trim(),phone=$("phone").value.trim();
-  if(!name||password.length<6){msg.innerHTML='<span class="error">Enter name and a password of at least 6 characters.</span>';return;}
+  const phoneDigits=phone.replace(/\D/g,"");
+  if(!name||password.length<6){msg.innerHTML='<span class="error">பெயர் மற்றும் குறைந்தது 6 எழுத்துகளுள்ள கடவுச்சொல்லை உள்ளிடவும்.</span>';return;}
+  if(!phone || phoneDigits.length<7 || phoneDigits.length>15){msg.innerHTML='<span class="error">சரியான மொபைல் எண்ணை உள்ளிடவும். மொபைல் எண் பதிவு செய்யப்படும்; SMS/OTP சரிபார்ப்பு தேவையில்லை. மின்னஞ்சல் சரிபார்ப்பு மட்டும் பயன்படுத்தப்படும்.</span>';return;}
   let cred=null;
   let createdNewAuthUser=false;
   let profileResponse=null;
@@ -989,7 +991,7 @@ async function submitAuth(mode){
     throw profileErr;
   }
   const createdId = profileResponse?.publicId ? `<br><b>Your Customer ID:</b> ${escapeHtml(profileResponse.publicId)}<br><span class="small">Keep this ID safe. It can be used for future Customer ID login.</span>` : '';
-  msg.innerHTML='<span class="success"><b>Registration successful ✓</b>'+createdId+'<br>Verification email sent. Please verify your account and login again.</span><button class="btn" id="registrationLoginBtn" style="margin-top:10px">Go to Login</button>';
+  msg.innerHTML='<span class="success"><b>Registration successful ✓</b>'+createdId+'<br>உங்கள் மொபைல் எண் பதிவு செய்யப்பட்டது. SMS/OTP சரிபார்ப்பு தேவையில்லை.<br>சரிபார்ப்பு மின்னஞ்சல் அனுப்பப்பட்டுள்ளது. மின்னஞ்சலை சரிபார்த்து மீண்டும் உள்நுழையவும்.</span><button class="btn" id="registrationLoginBtn" style="margin-top:10px">Go to Login</button>';
   $("registrationLoginBtn").onclick=async()=>{await logoutToHome();openAuth("login");};
  }catch(e){
   let t=e?.message||String(e);
