@@ -1208,7 +1208,7 @@ app.post('/astrologer/claim-question', express.json({limit:'10kb'}), async(req,r
 });
 
 const refundService=()=>createRefundService({db,razorpay,FieldValue,keyId:RAZORPAY_KEY_ID,keySecret:RAZORPAY_KEY_SECRET});
-app.get('/api-version', (req,res)=>res.set('Cache-Control','no-store').json({version:'20260913-refund-balance-v5',features:['refund-retry','original-price-payment-retry']}));
+app.get('/api-version', (req,res)=>res.set('Cache-Control','no-store').json({version:'20260911c-retry-v4',features:['refund-retry','original-price-payment-retry']}));
 
 for(const [path,retry] of [['/admin/reject-question',false],['/admin/retry-refund',true]]){
  app.post(path,express.json({limit:'10kb'}),async(req,res)=>{
