@@ -851,7 +851,9 @@ async function submitAuth(mode){
     return;
   }
   const name=$("name").value.trim(),phone=$("phone").value.trim();
+  const phoneDigits=phone.replace(/\D/g,"");
   if(!name||password.length<6){msg.innerHTML='<span class="error">Enter name and a password of at least 6 characters.</span>';return;}
+  if(!phone || phoneDigits.length<7 || phoneDigits.length>15){msg.innerHTML='<span class="error">Enter a valid mobile number. It will be saved to your profile; no SMS/OTP verification is required. Email verification only will be used.</span>';return;}
   let cred=null;
   let createdNewAuthUser=false;
   let profileResponse=null;
@@ -898,7 +900,7 @@ async function submitAuth(mode){
     throw profileErr;
   }
   const createdId = profileResponse?.publicId ? `<br><b>Your Customer ID:</b> ${escapeHtml(profileResponse.publicId)}<br><span class="small">Keep this ID safe. It can be used for future Customer ID login.</span>` : '';
-  msg.innerHTML='<span class="success"><b>Registration successful ✓</b>'+createdId+'<br>Verification email sent. Please verify your account and login again.</span><button class="btn" id="registrationLoginBtn" style="margin-top:10px">Go to Login</button>';
+  msg.innerHTML='<span class="success"><b>Registration successful ✓</b>'+createdId+'<br>Mobile number saved. No SMS/OTP verification is required.<br>Verification email sent. Please verify your email and login again.</span><button class="btn" id="registrationLoginBtn" style="margin-top:10px">Go to Login</button>';
   $("registrationLoginBtn").onclick=async()=>{await logoutToHome();openAuth("login");};
  }catch(e){
   let t=e?.message||String(e);
